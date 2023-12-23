@@ -22,4 +22,6 @@ public class Voivodeship {
     private String name;
     @Column(name = "wyroznik_tab_rej")
     private String licensePlateDifferentiator;
+    @Column(name = "kod_teryt")
+    private String TERYTCode;
 }
