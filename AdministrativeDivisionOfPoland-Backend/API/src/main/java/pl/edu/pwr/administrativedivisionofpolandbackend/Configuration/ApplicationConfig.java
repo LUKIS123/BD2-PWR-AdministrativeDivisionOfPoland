@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Security.Config;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

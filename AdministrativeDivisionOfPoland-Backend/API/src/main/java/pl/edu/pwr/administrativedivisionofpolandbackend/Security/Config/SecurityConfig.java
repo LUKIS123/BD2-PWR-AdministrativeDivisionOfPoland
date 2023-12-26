@@ -1,6 +1,5 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Security;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Security.Config;
 
-import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,12 +10,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+    private static final String[] WHITE_LIST_URLS = {
+            "/api/auth/**",
+            "/api/voivodeship/**"
+    };
+
     private final JwtAuthenticationFilter jwtAuthFiler;
     private final AuthenticationProvider authProvider;
 
@@ -24,8 +29,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/voivodeship")
+                        .requestMatchers(WHITE_LIST_URLS)
                         .permitAll()
                         .anyRequest()
                         .authenticated()

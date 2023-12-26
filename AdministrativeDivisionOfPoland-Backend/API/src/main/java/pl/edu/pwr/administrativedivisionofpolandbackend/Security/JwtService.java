@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Security.Config;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @Setter
 public class UserEligibility {
     @Id
-    @Column(name = "id_upr", nullable = false, unique = true, updatable = false)
+    @Column(name = "id_upr", nullable = false, unique = true, insertable = false, updatable = false)
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "id_upr")
+    @JoinColumn(name = "id_upr", insertable = false, updatable = false)
     private Eligibility eligibility;
 
     @ManyToOne(fetch = FetchType.LAZY)

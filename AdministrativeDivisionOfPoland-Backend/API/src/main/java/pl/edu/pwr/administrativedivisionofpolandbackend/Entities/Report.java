@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Report {
     @Id
-    @Column(name = "id_gm", nullable = false, unique = true, updatable = false)
+    @Column(name = "id_zgl", nullable = false, unique = true, updatable = false)
     private int id;
     @ManyToOne
     @JoinColumn(name = "id_woj")
