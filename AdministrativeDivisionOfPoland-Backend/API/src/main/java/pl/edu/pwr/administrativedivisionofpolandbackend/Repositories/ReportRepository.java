@@ -1,6 +1,7 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Report;
 
@@ -11,9 +12,30 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Integer> {
     Optional<Report> findById(int id);
 
-    List<Report> findByVoivodeshipId(int voivodeshipId);
+    @Query(nativeQuery = true, value = """
+            select * from zgloszenia\s
+            where id_woj = ?1\s
+            order by temat\s
+            offset ?2 rows\s
+            fetch first ?3 row only\s
+            """)
+    List<Report> findByVoivodeshipId(Integer voivodeshipId, Integer offsetRows, Integer fetchRows);
 
-    List<Report> findByCountyId(int countyId);
+    @Query(nativeQuery = true, value = """
+            select * from zgloszenia\s
+            where id_pow = ?1\s
+            order by temat\s
+            offset ?2 rows\s
+            fetch first ?3 row only\s
+            """)
+    List<Report> findByCountyId(Integer countyId, Integer offsetRows, Integer fetchRows);
 
-    List<Report> findByCommuneId(int communeId);
+    @Query(nativeQuery = true, value = """
+            select * from zgloszenia\s
+            where id_gm = ?1\s
+            order by temat\s
+            offset ?2 rows\s
+            fetch first ?3 row only\s
+            """)
+    List<Report> findByCommuneId(Integer communeId, Integer offsetRows, Integer fetchRows);
 }
