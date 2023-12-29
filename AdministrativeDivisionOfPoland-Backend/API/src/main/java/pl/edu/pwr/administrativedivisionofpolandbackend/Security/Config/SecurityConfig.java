@@ -19,7 +19,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 public class SecurityConfig {
     private static final String[] WHITE_LIST_URLS = {
             "/api/auth/**",
-            "/api/voivodeship/**"
+            "/api/voivodeship/**",
+            "/api/county/**",
+            "/api/commune/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFiler;
