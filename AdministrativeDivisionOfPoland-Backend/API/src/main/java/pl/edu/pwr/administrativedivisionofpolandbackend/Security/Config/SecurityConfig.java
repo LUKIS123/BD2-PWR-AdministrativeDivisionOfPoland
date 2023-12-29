@@ -18,6 +18,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @EnableMethodSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST_URLS = {
+            "/v2/**",
+            "/v3/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
             "/api/auth/**",
             "/api/voivodeship/**",
             "/api/county/**",
@@ -43,8 +47,7 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authProvider)
-                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class)
-        ;
+                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }

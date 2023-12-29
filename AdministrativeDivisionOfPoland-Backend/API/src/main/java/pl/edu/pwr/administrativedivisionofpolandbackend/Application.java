@@ -5,13 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-
+    // SWAGGER-UI: http://localhost:8085/swagger-ui/index.html#/
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-
-        // TODO:
-        // -dodac Contract (nowy modul) w kotrym beda trzymane obiekty typu DTO
-        // aby udostepnic jara do frontu
     }
 
 }
