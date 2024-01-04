@@ -1,10 +1,12 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Report;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,4 +40,11 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
             fetch first ?3 row only\s
             """)
     List<Report> findByCommuneId(Integer communeId, Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            insert into zgloszenia(id_woj, id_pow, id_gm, temat, tresc, data_zgloszenia)\s
+            values(?1, ?2, ?3, ?4, ?5, ?6)\s
+            RETURNING id_zgl\s
+            """)
+    Integer insertIntoReportTable(Integer voivodeshipId, Integer countyId, Integer communeId, String topic, String content, LocalDateTime date);
 }

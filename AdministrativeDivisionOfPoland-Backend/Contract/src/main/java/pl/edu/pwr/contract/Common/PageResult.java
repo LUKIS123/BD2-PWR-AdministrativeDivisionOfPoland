@@ -1,13 +1,18 @@
-package pl.edu.pwr.contract;
+package pl.edu.pwr.contract.Common;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class PageResult<T> {
     public List<T> items;
-    public int totalPages;
-    public int itemsFrom;
-    public int itemsTo;
-    public int totalItemsCount;
+    public Integer totalPages;
+    public Integer itemsFrom;
+    public Integer itemsTo;
+    public Integer totalItemsCount;
 
     public PageResult(List<T> items, int totalItemsCount, int pageSize, int pageNumber) {
         this.items = items;

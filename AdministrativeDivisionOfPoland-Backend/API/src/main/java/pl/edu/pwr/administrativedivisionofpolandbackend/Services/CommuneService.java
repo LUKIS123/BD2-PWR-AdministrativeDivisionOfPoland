@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Serives;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Commune;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CommuneRepository;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
-import pl.edu.pwr.contract.PageResult;
+import pl.edu.pwr.contract.Common.PageResult;
 
 import java.util.List;
 
@@ -25,16 +25,7 @@ public class CommuneService {
 
     public CommuneDto get(int id) {
         Commune commune = communeRepository.findById(id).orElseThrow(() -> new RuntimeException("Commune not found"));
-        return new CommuneDto(
-                commune.getId(),
-                commune.getCounty().getId(),
-                commune.getCounty().getName(),
-                commune.getName(),
-                commune.getPopulation(),
-                commune.getAre(),
-                commune.getCounty().getName(),
-                commune.getTERYTCode()
-        );
+        return mapToCommuneDto(commune);
     }
 
     public PageResult<CommuneDto> getByCountyId(int countyId, int page, int size) {
@@ -48,16 +39,24 @@ public class CommuneService {
     }
 
     private PageResult<CommuneDto> getCommuneDtoPageResult(int page, int size, List<Commune> all) {
-        List<CommuneDto> communeDtos = all.stream().map(commune -> new CommuneDto(
-                        commune.getId(),
-                        commune.getCounty().getId(),
-                        commune.getCounty().getName(),
-                        commune.getName(),
-                        commune.getPopulation(),
-                        commune.getAre(),
-                        commune.getCounty().getName(),
-                        commune.getTERYTCode()))
+        List<CommuneDto> communeDtos = all.stream()
+                .map(this::mapToCommuneDto)
                 .toList();
         return new PageResult<>(communeDtos, communeDtos.size(), size, page);
+    }
+
+    private CommuneDto mapToCommuneDto(Commune commune) {
+        var countyId = commune.getCounty() == null ? null : commune.getCounty().getId();
+        var countyName = commune.getCounty() == null ? null : commune.getCounty().getName();
+        var communeType = commune.getCommuneType() == null ? null : commune.getCommuneType().getTypeName();
+        return new CommuneDto(
+                commune.getId(),
+                countyId,
+                countyName,
+                commune.getName(),
+                commune.getPopulation(),
+                commune.getAre(),
+                communeType,
+                commune.getTERYTCode());
     }
 }

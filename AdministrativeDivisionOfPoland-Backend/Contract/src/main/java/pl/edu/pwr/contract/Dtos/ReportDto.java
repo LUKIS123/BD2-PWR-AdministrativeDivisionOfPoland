@@ -1,29 +1,27 @@
 package pl.edu.pwr.contract.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ReportDto {
-    public int id;
-    public int voivodeshipId;
+    public Integer id;
+    public Integer voivodeshipId;
     public String voivodeshipName;
-    public int countyId;
+    public Integer countyId;
     public String countyName;
-    public int communeId;
+    public Integer communeId;
     public String communeName;
     public String topic;
     public String content;
     public LocalDateTime reportingDate;
-
-    public ReportDto(int id, int voivodeshipId, String voivodeshipName, int countyId, String countyName, int communeId, String communeName, String topic, String content, LocalDateTime reportingDate) {
-        this.id = id;
-        this.voivodeshipId = voivodeshipId;
-        this.voivodeshipName = voivodeshipName;
-        this.countyId = countyId;
-        this.countyName = countyName;
-        this.communeId = communeId;
-        this.communeName = communeName;
-        this.topic = topic;
-        this.content = content;
-        this.reportingDate = reportingDate;
-    }
 }

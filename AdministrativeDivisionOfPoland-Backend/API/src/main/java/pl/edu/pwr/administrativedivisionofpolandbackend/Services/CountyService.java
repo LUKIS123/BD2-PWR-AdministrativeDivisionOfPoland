@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Serives;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRepository;
 import pl.edu.pwr.contract.Dtos.CountyDto;
-import pl.edu.pwr.contract.PageResult;
+import pl.edu.pwr.contract.Common.PageResult;
 
 import java.util.List;
 
@@ -25,15 +25,7 @@ public class CountyService {
 
     public CountyDto get(int id) {
         County county = countyRepository.findById(id).orElseThrow(() -> new RuntimeException("County not found"));
-        return new CountyDto(
-                county.getId(),
-                county.getVoivodeship().getId(),
-                county.getVoivodeship().getName(),
-                county.getName(),
-                county.isCityWithCountyRights(),
-                county.getLicensePlateDifferentiator(),
-                county.getTERYTCode()
-        );
+        return mapToCountyDto(county);
     }
 
     public PageResult<CountyDto> getByVoivodeshipId(int voivodeshipId, int page, int size) {
@@ -47,16 +39,23 @@ public class CountyService {
     }
 
     private PageResult<CountyDto> getCountyDtoPageResult(int page, int size, List<County> all) {
-        List<CountyDto> countyDtos = all.stream().map(county -> new CountyDto(
-                        county.getId(),
-                        county.getVoivodeship().getId(),
-                        county.getVoivodeship().getName(),
-                        county.getName(),
-                        county.isCityWithCountyRights(),
-                        county.getLicensePlateDifferentiator(),
-                        county.getTERYTCode()))
+        List<CountyDto> countyDtos = all.stream()
+                .map(this::mapToCountyDto)
                 .toList();
         return new PageResult<>(countyDtos, countyDtos.size(), size, page);
+    }
+
+    private CountyDto mapToCountyDto(County county) {
+        var voivodeshipId = county.getVoivodeship() == null ? null : county.getVoivodeship().getId();
+        var voivodeshipName = county.getVoivodeship() == null ? null : county.getVoivodeship().getName();
+        return new CountyDto(
+                county.getId(),
+                voivodeshipId,
+                voivodeshipName,
+                county.getName(),
+                county.isCityWithCountyRights(),
+                county.getLicensePlateDifferentiator(),
+                county.getTERYTCode());
     }
 
 }

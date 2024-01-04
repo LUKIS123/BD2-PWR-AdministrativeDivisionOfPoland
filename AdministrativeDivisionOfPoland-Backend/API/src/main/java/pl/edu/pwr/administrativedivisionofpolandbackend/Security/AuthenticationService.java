@@ -10,9 +10,9 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.TokenReposi
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.UserRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.Token.Token;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.Token.TokenType;
-import pl.edu.pwr.contract.AuthenticateRequest;
-import pl.edu.pwr.contract.AuthenticationResponse;
-import pl.edu.pwr.contract.RegisterRequest;
+import pl.edu.pwr.contract.Auth.AuthenticateRequest;
+import pl.edu.pwr.contract.Auth.AuthenticationResponse;
+import pl.edu.pwr.contract.Auth.RegisterRequest;
 
 @Service
 @RequiredArgsConstructor

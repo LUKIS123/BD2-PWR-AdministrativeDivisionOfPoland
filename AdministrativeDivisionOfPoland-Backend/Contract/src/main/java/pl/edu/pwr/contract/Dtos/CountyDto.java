@@ -1,21 +1,22 @@
 package pl.edu.pwr.contract.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class CountyDto {
-    public int id;
-    public int voivodeshipId;
+    public Integer id;
+    public Integer voivodeshipId;
     public String voivodeshipName;
     public String name;
-    public boolean isCityWithCountyRights;
+    public Boolean isCityWithCountyRights;
     public String licensePlateDifferentiator;
     public String TERYTCode;
-
-    public CountyDto(int id, int voivodeshipId, String voivodeshipName, String name, boolean isCityWithCountyRights, String licensePlateDifferentiator, String TERYTCode) {
-        this.id = id;
-        this.voivodeshipId = voivodeshipId;
-        this.voivodeshipName = voivodeshipName;
-        this.name = name;
-        this.isCityWithCountyRights = isCityWithCountyRights;
-        this.licensePlateDifferentiator = licensePlateDifferentiator;
-        this.TERYTCode = TERYTCode;
-    }
 }

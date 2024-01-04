@@ -3,9 +3,9 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Serives.CountyService;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CountyService;
 import pl.edu.pwr.contract.Dtos.CountyDto;
-import pl.edu.pwr.contract.PageResult;
+import pl.edu.pwr.contract.Common.PageResult;
 
 @RestController
 @RequestMapping("api/county")

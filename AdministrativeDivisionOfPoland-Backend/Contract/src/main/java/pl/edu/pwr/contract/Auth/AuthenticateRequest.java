@@ -1,4 +1,4 @@
-package pl.edu.pwr.contract;
+package pl.edu.pwr.contract.Auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String token;
+public class AuthenticateRequest {
+    String login;
+    String password;
 }

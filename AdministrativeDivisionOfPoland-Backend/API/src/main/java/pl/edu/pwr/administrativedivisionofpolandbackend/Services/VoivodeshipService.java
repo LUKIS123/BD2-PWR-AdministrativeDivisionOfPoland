@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Serives;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRepository;
+import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
-import pl.edu.pwr.contract.PageResult;
 
 import java.util.List;
 

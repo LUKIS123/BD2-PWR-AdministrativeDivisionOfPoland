@@ -1,11 +1,16 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Serives.ReportService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Services.ReportService;
+import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.ReportDto;
-import pl.edu.pwr.contract.PageResult;
+import pl.edu.pwr.contract.Reports.AddReportRequest;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("api/report")
@@ -41,6 +46,19 @@ public class ReportController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(reportService.getAllByCommuneId(communeId, page, size));
+    }
+
+    @SneakyThrows
+    @PostMapping("/add")
+    public ResponseEntity<Object> createReport(
+            @RequestBody AddReportRequest addReportRequest
+    ) {
+        Integer reportId = reportService.createReport(addReportRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/report/{id}")
+                .buildAndExpand(reportId)
+                .toUri();
+        return ResponseEntity.created(location).body(location);
     }
 
 }

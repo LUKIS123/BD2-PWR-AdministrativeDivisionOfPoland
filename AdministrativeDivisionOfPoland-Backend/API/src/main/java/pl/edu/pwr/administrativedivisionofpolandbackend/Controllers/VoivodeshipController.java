@@ -3,9 +3,9 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Serives.VoivodeshipService;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Services.VoivodeshipService;
+import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
-import pl.edu.pwr.contract.PageResult;
 
 @RestController
 @RequestMapping("api/voivodeship")

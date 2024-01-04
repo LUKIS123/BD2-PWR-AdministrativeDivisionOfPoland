@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.AuthenticationService;
-import pl.edu.pwr.contract.AuthenticateRequest;
-import pl.edu.pwr.contract.AuthenticationResponse;
-import pl.edu.pwr.contract.RegisterRequest;
+import pl.edu.pwr.contract.Auth.AuthenticateRequest;
+import pl.edu.pwr.contract.Auth.AuthenticationResponse;
+import pl.edu.pwr.contract.Auth.RegisterRequest;
 
 @RestController
 @RequestMapping("/api/auth")
