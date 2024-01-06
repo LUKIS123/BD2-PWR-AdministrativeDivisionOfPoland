@@ -15,5 +15,5 @@ public class VoivodeshipDto {
     public Integer id;
     public String name;
     public String licensePlateDifferentiator;
-    public String TERYTCode;
+    public String terytCode;
 }

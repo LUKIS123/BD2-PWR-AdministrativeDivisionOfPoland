@@ -11,12 +11,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Configuration.ApplicationConfig;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+    private final ApplicationConfig applicationConfig;
+
     private static final String[] WHITE_LIST_URLS = {
             "/v2/**",
             "/v3/**",
@@ -36,6 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(applicationConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(WHITE_LIST_URLS)

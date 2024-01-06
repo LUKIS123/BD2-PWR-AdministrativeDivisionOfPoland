@@ -19,5 +19,5 @@ public class CommuneDto {
     public Integer population;
     public Double area;
     public String communeType;
-    public String TERYTCode;
+    public String terytCode;
 }

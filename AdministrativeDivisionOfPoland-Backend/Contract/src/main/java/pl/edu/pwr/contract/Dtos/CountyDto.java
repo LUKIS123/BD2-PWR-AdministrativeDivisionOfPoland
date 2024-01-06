@@ -18,5 +18,5 @@ public class CountyDto {
     public String name;
     public Boolean isCityWithCountyRights;
     public String licensePlateDifferentiator;
-    public String TERYTCode;
+    public String terytCode;
 }
