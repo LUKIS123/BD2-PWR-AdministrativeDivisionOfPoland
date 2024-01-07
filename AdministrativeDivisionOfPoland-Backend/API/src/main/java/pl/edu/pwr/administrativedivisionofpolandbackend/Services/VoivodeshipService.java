@@ -20,7 +20,8 @@ public class VoivodeshipService {
 
     public PageResult<VoivodeshipDto> getAll(int page, int size) {
         List<Voivodeship> all = voivodeshipRepository.getAll(size * (page - 1), size);
-        return getCountyDtoPageResult(page, size, all);
+        Integer count = voivodeshipRepository.getCount();
+        return getCountyDtoPageResult(page, size, all, count);
     }
 
     public VoivodeshipDto get(int id) {
@@ -34,18 +35,20 @@ public class VoivodeshipService {
     }
 
     public PageResult<VoivodeshipDto> searchByName(String searchPhrase, int page, int size) {
-        List<Voivodeship> results = voivodeshipRepository.searchByName("%" + searchPhrase + "%", size * (page - 1), size);
-        return getCountyDtoPageResult(page, size, results);
+        String phrase = "%" + searchPhrase.toLowerCase() + "%";
+        List<Voivodeship> results = voivodeshipRepository.searchByName(phrase, size * (page - 1), size);
+        Integer countFromSearch = voivodeshipRepository.getCountFromSearch(phrase);
+        return getCountyDtoPageResult(page, size, results, countFromSearch);
     }
 
-    private PageResult<VoivodeshipDto> getCountyDtoPageResult(int page, int size, List<Voivodeship> all) {
+    private PageResult<VoivodeshipDto> getCountyDtoPageResult(int page, int size, List<Voivodeship> all, int count) {
         List<VoivodeshipDto> voivodeshipDtos = all.stream().map(voivodeship -> new VoivodeshipDto(
                         voivodeship.getId(),
                         voivodeship.getName(),
                         voivodeship.getLicensePlateDifferentiator(),
                         voivodeship.getTERYTCode()))
                 .toList();
-        return new PageResult<>(voivodeshipDtos, voivodeshipDtos.size(), size, page);
+        return new PageResult<>(voivodeshipDtos, count, size, page);
     }
 
 }

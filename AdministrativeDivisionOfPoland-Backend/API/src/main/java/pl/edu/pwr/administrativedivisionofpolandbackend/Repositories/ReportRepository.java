@@ -1,7 +1,6 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Report;
@@ -24,6 +23,12 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
     List<Report> findByVoivodeshipId(Integer voivodeshipId, Integer offsetRows, Integer fetchRows);
 
     @Query(nativeQuery = true, value = """
+            select count(*) from zgloszenia\s
+            where id_woj = ?1\s
+            """)
+    Integer getByVoivodeshipCount(Integer voivodeshipId);
+
+    @Query(nativeQuery = true, value = """
             select * from zgloszenia\s
             where id_pow = ?1\s
             order by temat\s
@@ -33,6 +38,12 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
     List<Report> findByCountyId(Integer countyId, Integer offsetRows, Integer fetchRows);
 
     @Query(nativeQuery = true, value = """
+            select count(*) from zgloszenia\s
+            where id_pow = ?1\s
+            """)
+    Integer getByCountyCount(Integer countyId);
+
+    @Query(nativeQuery = true, value = """
             select * from zgloszenia\s
             where id_gm = ?1\s
             order by temat\s
@@ -40,6 +51,12 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
             fetch first ?3 row only\s
             """)
     List<Report> findByCommuneId(Integer communeId, Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            select count(*) from zgloszenia\s
+            where id_gm = ?1\s
+            """)
+    Integer getByCommuneCount(Integer communeId);
 
     @Query(nativeQuery = true, value = """
             insert into zgloszenia(id_woj, id_pow, id_gm, temat, tresc, data_zgloszenia)\s

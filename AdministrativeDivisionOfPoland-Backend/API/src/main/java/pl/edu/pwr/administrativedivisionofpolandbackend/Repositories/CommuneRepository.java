@@ -22,19 +22,36 @@ public interface CommuneRepository extends JpaRepository<Commune, Integer> {
     List<Commune> getCommunesByCountyId(Integer countyId, Integer offsetRows, Integer fetchRows);
 
     @Query(nativeQuery = true, value = """
+            select  count(*) from gmina\s
+            where id_pow = ?1\s
+            """)
+    Integer getCommunesByCountyIdCount(Integer countyId);
+
+    @Query(nativeQuery = true, value = """
             select * from gmina\s
             order by nazwa_gminy\s
             offset ?1 rows\s
             fetch first ?2 row only\s
             """)
-    public List<Commune> getAll(Integer offsetRows, Integer fetchRows);
+    List<Commune> getAll(Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            select count(*) from gmina\s
+            """)
+    Integer getCount();
 
     @Query(nativeQuery = true, value = """
             select * from gmina\s
-            where gmina.nazwa_gminy like(?1)\s
+            where lower(gmina.nazwa_gminy) like(?1)\s
             order by nazwa_gminy\s
             offset ?2 rows\s
             fetch first ?3 row only\s
             """)
     List<Commune> searchByName(String searchPhrase, Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            select count(*) from gmina\s
+            where lower(gmina.nazwa_gminy) like(?1)\s
+            """)
+    Integer getCountFromSearch(String searchPhrase);
 }

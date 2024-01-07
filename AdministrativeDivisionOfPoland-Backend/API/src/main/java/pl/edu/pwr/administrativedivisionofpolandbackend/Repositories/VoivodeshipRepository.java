@@ -10,6 +10,16 @@ import java.util.Optional;
 
 @Repository
 public interface VoivodeshipRepository extends JpaRepository<Voivodeship, Integer> {
+    @Query(nativeQuery = true, value = """
+            select count(*) from wojewodztwo\s
+            """)
+    Integer getCount();
+
+    @Query(nativeQuery = true, value = """
+            select count(*) from wojewodztwo\s
+            where lower(wojewodztwo.nazwa_wojewodztwa) like(?1)\s
+            """)
+    Integer getCountFromSearch(String searchPhrase);
 
     Optional<Voivodeship> findById(int id);
 
@@ -23,7 +33,7 @@ public interface VoivodeshipRepository extends JpaRepository<Voivodeship, Intege
 
     @Query(nativeQuery = true, value = """
             select * from wojewodztwo\s
-            where wojewodztwo.nazwa_wojewodztwa like(?1)
+            where lower(wojewodztwo.nazwa_wojewodztwa) like(?1)
             order by nazwa_wojewodztwa\s
             offset ?2 rows\s
             fetch first ?3 row only\s
