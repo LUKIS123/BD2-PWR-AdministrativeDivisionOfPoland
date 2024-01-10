@@ -66,8 +66,8 @@ public class CommuneService {
     }
 
     private CommuneDto mapToCommuneDto(CommuneProjection commune) {
-        var countyId = commune.getCounty() == null ? null : commune.getCounty().getId();
-        var countyName = commune.getCounty() == null ? null : commune.getCounty().getName();
+        var countyId = commune.getCountyId() == null ? null : commune.getCountyId();
+        var countyName = commune.getCountyName() == null ? null : commune.getCountyName();
         var communeType = commune.getCommuneType() == null ? null : commune.getCommuneType();
         return new CommuneDto(
                 commune.getId(),

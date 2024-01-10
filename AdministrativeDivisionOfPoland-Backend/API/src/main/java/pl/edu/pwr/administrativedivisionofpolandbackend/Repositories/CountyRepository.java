@@ -15,7 +15,7 @@ public interface CountyRepository extends JpaRepository<County, Integer> {
 
     @Query(nativeQuery = true, value = """
             select\s
-            id_pow as countyId,\s
+            id_pow as id,\s
             powiat.id_woj as voivodeshipId,\s
             nazwa_wojewodztwa as voivodeshipName,\s
             nazwa_powiatu as name,\s
@@ -39,7 +39,7 @@ public interface CountyRepository extends JpaRepository<County, Integer> {
 
     @Query(nativeQuery = true, value = """
             select\s
-            id_pow as countyId,\s
+            id_pow as id,\s
             powiat.id_woj as voivodeshipId,\s
             nazwa_wojewodztwa as voivodeshipName,\s
             nazwa_powiatu as name,\s
@@ -61,7 +61,7 @@ public interface CountyRepository extends JpaRepository<County, Integer> {
 
     @Query(nativeQuery = true, value = """
             select\s
-            id_pow as countyId,\s
+            id_pow as id,\s
             powiat.id_woj as voivodeshipId,\s
             nazwa_wojewodztwa as voivodeshipName,\s
             nazwa_powiatu as name,\s

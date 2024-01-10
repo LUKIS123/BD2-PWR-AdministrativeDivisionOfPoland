@@ -1,11 +1,11 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Model;
 
-import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
-
 public interface CommuneProjection {
     public int getId();
 
-    public County getCounty();
+    public Integer getCountyId();
+
+    public String getCountyName();
 
     public String getName();
 
