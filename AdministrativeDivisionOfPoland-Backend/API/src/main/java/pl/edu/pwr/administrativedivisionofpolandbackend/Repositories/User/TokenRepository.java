@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User;
 
 import org.springframework.stereotype.Repository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.Token.Token;

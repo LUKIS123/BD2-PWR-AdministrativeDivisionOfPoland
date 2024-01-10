@@ -18,7 +18,7 @@ public class County {
     @Id
     @Column(name = "id_pow", nullable = false, unique = true, updatable = false)
     private int id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_woj")
     private Voivodeship voivodeship;
     @Column(name = "nazwa_powiatu")

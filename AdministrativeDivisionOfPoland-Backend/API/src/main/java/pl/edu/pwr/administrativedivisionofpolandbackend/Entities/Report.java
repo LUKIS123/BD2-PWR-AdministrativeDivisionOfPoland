@@ -20,13 +20,13 @@ public class Report {
     @Id
     @Column(name = "id_zgl", nullable = false, unique = true, updatable = false)
     private int id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_woj")
     private Voivodeship voivodeship;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pow")
     private County county;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_gm")
     private Commune commune;
     @Column(name = "temat")

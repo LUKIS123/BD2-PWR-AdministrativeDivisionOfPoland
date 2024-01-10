@@ -6,8 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.User;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.TokenRepository;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.UserRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.TokenRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.UserRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.Token.Token;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Security.Token.TokenType;
 import pl.edu.pwr.contract.Auth.AuthenticateRequest;
