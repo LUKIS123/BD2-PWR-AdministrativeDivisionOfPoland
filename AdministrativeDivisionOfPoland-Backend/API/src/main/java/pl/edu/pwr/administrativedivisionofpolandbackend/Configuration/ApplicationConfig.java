@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.UserRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.UserRepository;
 
 import java.util.List;
 

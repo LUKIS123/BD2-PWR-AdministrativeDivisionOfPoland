@@ -18,7 +18,7 @@ public class VoivodeshipRegisteredOffice {
     @Id
     @Column(name = "id_siedz", nullable = false, unique = true, updatable = false)
     private int id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_woj")
     private Voivodeship voivodeship;
     @Column(name = "miejscowosc_siedziby")
@@ -27,7 +27,7 @@ public class VoivodeshipRegisteredOffice {
     private boolean isSeatOfVoivode;
     @Column(name = "siedziba_sejmiku")
     private boolean isSeatOfCouncil;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_adresu_siedziby")
     private RegisteredOfficeAddresses registeredOfficeAddresses;
 }

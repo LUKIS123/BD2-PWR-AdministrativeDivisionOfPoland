@@ -18,7 +18,7 @@ public class UserEligibility {
     @Column(name = "id_upr", nullable = false, unique = true, insertable = false, updatable = false)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_upr", insertable = false, updatable = false)
     private Eligibility eligibility;
 

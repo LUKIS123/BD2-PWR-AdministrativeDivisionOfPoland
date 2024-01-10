@@ -18,7 +18,7 @@ public class Commune {
     @Id
     @Column(name = "id_gm", nullable = false, unique = true, updatable = false)
     private int id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pow")
     private County county;
     @Column(name = "nazwa_gminy")
@@ -27,7 +27,7 @@ public class Commune {
     private int population;
     @Column(name = "powierzchnia")
     private double are;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rodzaj_gminy")
     private CommuneType communeType;
     @Column(name = "kod_teryt")

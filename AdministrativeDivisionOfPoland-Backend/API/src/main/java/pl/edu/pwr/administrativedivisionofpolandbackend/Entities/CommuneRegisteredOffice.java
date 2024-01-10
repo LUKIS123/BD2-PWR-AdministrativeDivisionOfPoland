@@ -18,12 +18,12 @@ public class CommuneRegisteredOffice {
     @Id
     @Column(name = "id_siedz", nullable = false, unique = true, updatable = false)
     private int id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_gm")
     private Commune commune;
     @Column(name = "miejscowosc_siedziby")
     private String locality;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_adresu_siedziby")
     private RegisteredOfficeAddresses registeredOfficeAddresses;
 }

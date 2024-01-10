@@ -1,4 +1,4 @@
-package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
+package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.History;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.CommuneHistory;

@@ -19,7 +19,7 @@ public class CommuneController {
     }
 
     @GetMapping("/byCounty")
-    public ResponseEntity<PageResult<CommuneDto>> getByVoivodeshipId(
+    public ResponseEntity<PageResult<CommuneDto>> getByCountyId(
             @RequestParam(value = "countyId") int countyId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {

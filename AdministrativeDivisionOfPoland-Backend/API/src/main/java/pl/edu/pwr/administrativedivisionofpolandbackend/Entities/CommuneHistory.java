@@ -32,7 +32,7 @@ public class CommuneHistory {
     private int population;
     @Column(name = "powierzchnia")
     private double are;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rodzaj_gminy")
     private CommuneType communeType;
     @Column(name = "data_poczatkowa")
