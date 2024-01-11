@@ -18,6 +18,13 @@ import java.net.URI;
 public class ReportController {
     private final ReportService reportService;
 
+    @GetMapping("/all")
+    public ResponseEntity<PageResult<ReportDto>> findAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "15") int size){
+        return ResponseEntity.ok().body(reportService.getAll(page, size));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReportDto> getById(@PathVariable(value = "id") int id) {
         return ResponseEntity.ok().body(reportService.getById(id));
