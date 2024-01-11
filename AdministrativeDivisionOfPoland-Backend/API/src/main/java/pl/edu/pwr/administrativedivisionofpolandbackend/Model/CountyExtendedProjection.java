@@ -1,6 +1,6 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Model;
 
-public interface CountyProjection {
+public interface CountyExtendedProjection {
     Integer getId();
 
     Integer getVoivodeshipId();
@@ -14,4 +14,8 @@ public interface CountyProjection {
     String getLicensePlateDifferentiator();
 
     String getTerytCode();
+
+    Integer getPopulation();
+
+    Double getArea();
 }

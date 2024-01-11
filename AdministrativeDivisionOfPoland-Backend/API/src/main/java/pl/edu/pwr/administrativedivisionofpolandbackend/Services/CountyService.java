@@ -1,13 +1,18 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyAddressDataProjection;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRepository;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.Dtos.CountyAddressData;
+import pl.edu.pwr.contract.Dtos.CountyExtended;
 import pl.edu.pwr.contract.Dtos.CountyDto;
 
 import java.util.List;
@@ -26,7 +31,7 @@ public class CountyService {
     }
 
     public CountyDto get(int id) {
-        County county = countyRepository.findById(id).orElseThrow(() -> new RuntimeException("County not found"));
+        County county = countyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("County not found"));
         return mapToCountyDto(county);
     }
 
@@ -74,6 +79,94 @@ public class CountyService {
                 county.getCityWithCountyRights(),
                 county.getLicensePlateDifferentiator(),
                 county.getTerytCode());
+    }
+
+    public PageResult<CountyAddressData> getAllWithAddressData(int page, int size) {
+        List<CountyAddressDataProjection> allCountyAddressData = countyRepository.getAllCountyAddressData(size * (page - 1), size);
+        Integer count = countyRepository.getCount();
+        return getCountyWithAddressDataDtoPageResult(page, size, allCountyAddressData, count);
+    }
+
+    public CountyAddressData getWithAddressData(int id) {
+        CountyAddressDataProjection countyWithAddressData = countyRepository.getCountyAddressDataById(id).orElseThrow(() -> new EntityNotFoundException("County not found"));
+        return new CountyAddressData(
+                countyWithAddressData.getId(),
+                countyWithAddressData.getVoivodeshipId(),
+                countyWithAddressData.getName(),
+                countyWithAddressData.getOfficeLocalityName(),
+                countyWithAddressData.getPostalCode(),
+                countyWithAddressData.getLocality(),
+                countyWithAddressData.getStreet(),
+                countyWithAddressData.getBuildingNumber(),
+                countyWithAddressData.getApartmentNumber()
+        );
+    }
+
+    public PageResult<CountyAddressData> getWithAddressDataByVoivodeshipId(int voivodeshipId, int page, int size) {
+        List<CountyAddressDataProjection> countyAddressDataByVoivodeshipId = countyRepository.getCountyAddressDataByVoivodeshipId(voivodeshipId, size * (page - 1), size);
+        Integer countiesByVoivodeshipIdCount = countyRepository.getCountiesByVoivodeshipIdCount(voivodeshipId);
+        return getCountyWithAddressDataDtoPageResult(page, size, countyAddressDataByVoivodeshipId, countiesByVoivodeshipIdCount);
+    }
+
+    private PageResult<CountyAddressData> getCountyWithAddressDataDtoPageResult(int page, int size, List<CountyAddressDataProjection> all, int count) {
+        List<CountyAddressData> list = all.stream()
+                .map(x -> new CountyAddressData(
+                        x.getId(),
+                        x.getVoivodeshipId(),
+                        x.getName(),
+                        x.getOfficeLocalityName(),
+                        x.getPostalCode(),
+                        x.getLocality(),
+                        x.getStreet(),
+                        x.getBuildingNumber(),
+                        x.getApartmentNumber()
+                ))
+                .toList();
+        return new PageResult<>(list, count, size, page);
+    }
+
+    public PageResult<CountyExtended> getAllExtended(int page, int size) {
+        List<CountyExtendedProjection> allCountyExtended = countyRepository.getAllCountyExtended(size * (page - 1), size);
+        Integer count = countyRepository.getCount();
+        return getCountyExtendedPageResult(page, size, allCountyExtended, count);
+    }
+
+    public CountyExtended getExtended(int id) {
+        CountyExtendedProjection county = countyRepository.getCountyExtendedById(id).orElseThrow(() -> new EntityNotFoundException("County not found"));
+        return new CountyExtended(
+                county.getId(),
+                county.getVoivodeshipId(),
+                county.getVoivodeshipName(),
+                county.getName(),
+                county.getCityWithCountyRights(),
+                county.getLicensePlateDifferentiator(),
+                county.getTerytCode(),
+                county.getPopulation(),
+                county.getArea()
+        );
+    }
+
+    public PageResult<CountyExtended> getExtendedByVoivodeshipId(int voivodeshipId, int page, int size) {
+        List<CountyExtendedProjection> countyExtendedVoivodeshipId = countyRepository.getCountyExtendedByVoivodeshipId(voivodeshipId, size * (page - 1), size);
+        Integer countiesByVoivodeshipIdCount = countyRepository.getCountiesByVoivodeshipIdCount(voivodeshipId);
+        return getCountyExtendedPageResult(page, size, countyExtendedVoivodeshipId, countiesByVoivodeshipIdCount);
+    }
+
+    private PageResult<CountyExtended> getCountyExtendedPageResult(int page, int size, List<CountyExtendedProjection> all, int count) {
+        List<CountyExtended> list = all.stream()
+                .map(x -> new CountyExtended(
+                        x.getId(),
+                        x.getVoivodeshipId(),
+                        x.getVoivodeshipName(),
+                        x.getName(),
+                        x.getCityWithCountyRights(),
+                        x.getLicensePlateDifferentiator(),
+                        x.getTerytCode(),
+                        x.getPopulation(),
+                        x.getArea()
+                ))
+                .toList();
+        return new PageResult<>(list, count, size, page);
     }
 
 }

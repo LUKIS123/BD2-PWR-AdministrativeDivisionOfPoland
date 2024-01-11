@@ -1,13 +1,16 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Commune;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CommuneRepository;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
 
 import java.util.List;
@@ -26,7 +29,7 @@ public class CommuneService {
     }
 
     public CommuneDto get(int id) {
-        Commune commune = communeRepository.findById(id).orElseThrow(() -> new RuntimeException("Commune not found"));
+        Commune commune = communeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Commune not found"));
         return mapToCommuneDto(commune);
     }
 
@@ -58,8 +61,8 @@ public class CommuneService {
                 commune.getTERYTCode());
     }
 
-    private PageResult<CommuneDto> getCommuneDtoPageResultFromProjection(int page, int size, List<CommuneProjection> all, int count) {
-        List<CommuneDto> communeDtos = all.stream()
+    private PageResult<CommuneDto> getCommuneDtoPageResultFromProjection(int page, int size, List<CommuneProjection> list, int count) {
+        List<CommuneDto> communeDtos = list.stream()
                 .map(this::mapToCommuneDto)
                 .toList();
         return new PageResult<>(communeDtos, count, size, page);
@@ -78,6 +81,48 @@ public class CommuneService {
                 commune.getArea(),
                 communeType,
                 commune.getTERYTCode());
+    }
+
+    public PageResult<CommuneAddressData> getAllWithAddressData(int page, int size) {
+        List<CommuneAddressDataProjection> allCommuneAddressData = communeRepository.getAllCommuneAddressData(size * (page - 1), size);
+        Integer count = communeRepository.getCount();
+        return getCommuneAddressDataFromProjection(page, size, allCommuneAddressData, count);
+    }
+
+    public CommuneAddressData getWithAddressData(int id) {
+        CommuneAddressDataProjection communeNotFound = communeRepository.getCommuneAddressDataById(id).orElseThrow(() -> new EntityNotFoundException("Commune not found"));
+        return new CommuneAddressData(
+                communeNotFound.getId(),
+                communeNotFound.getCountyId(),
+                communeNotFound.getName(),
+                communeNotFound.getOfficeLocalityName(),
+                communeNotFound.getPostalCode(),
+                communeNotFound.getLocality(),
+                communeNotFound.getStreet(),
+                communeNotFound.getBuildingNumber(),
+                communeNotFound.getApartmentNumber());
+    }
+
+    public PageResult<CommuneAddressData> getWithAddressDataByCountyId(int countyId, int page, int size) {
+        List<CommuneAddressDataProjection> communeAddressDataByCountyId = communeRepository.getCommuneAddressDataByCountyId(countyId, page, size);
+        Integer communesByCountyIdCount = communeRepository.getCommunesByCountyIdCount(countyId);
+        return getCommuneAddressDataFromProjection(page, size, communeAddressDataByCountyId, communesByCountyIdCount);
+    }
+
+    public PageResult<CommuneAddressData> getCommuneAddressDataFromProjection(int page, int size, List<CommuneAddressDataProjection> list, int count) {
+        List<CommuneAddressData> dtos = list.stream()
+                .map(x -> new CommuneAddressData(
+                        x.getId(),
+                        x.getCountyId(),
+                        x.getName(),
+                        x.getOfficeLocalityName(),
+                        x.getPostalCode(),
+                        x.getLocality(),
+                        x.getStreet(),
+                        x.getBuildingNumber(),
+                        x.getApartmentNumber()))
+                .toList();
+        return new PageResult<>(dtos, count, size, page);
     }
 
 }

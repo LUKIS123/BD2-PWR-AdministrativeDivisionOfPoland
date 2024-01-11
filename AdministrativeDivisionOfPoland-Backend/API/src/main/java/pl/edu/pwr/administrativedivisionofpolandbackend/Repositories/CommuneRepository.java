@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Commune;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneProjection;
 
 import java.util.List;
@@ -88,4 +89,58 @@ public interface CommuneRepository extends JpaRepository<Commune, Integer> {
             where lower(gmina.nazwa_gminy) like(?1)\s
             """)
     Integer getCountFromSearch(String searchPhrase);
+
+    @Query(nativeQuery = true, value = """
+            select\s
+            id_gm as id,\s
+            id_pow as countyId,\s
+            nazwa_gminy as name,\s
+            miejscowosc_siedziby as officeLocalityName,\s
+            kod_pocztowy as postalCode,\s
+            miejscowość as locality,\s
+            ulica as street,\s
+            numer_budynku as buildingNumber,\s
+            numer_lokalu as apartmentNumber\s
+            from gminydaneadresowe\s
+            order by nazwa_gminy\s
+            offset ?1 rows\s
+            fetch first ?2 row only\s
+            """)
+    List<CommuneAddressDataProjection> getAllCommuneAddressData(Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            select\s
+            id_gm as id,\s
+            id_pow as countyId,\s
+            nazwa_gminy as name,\s
+            miejscowosc_siedziby as officeLocalityName,\s
+            kod_pocztowy as postalCode,\s
+            miejscowość as locality,\s
+            ulica as street,\s
+            numer_budynku as buildingNumber,\s
+            numer_lokalu as apartmentNumber\s
+            from gminydaneadresowe\s
+            where id_pow = ?1\s
+            limit 1\s
+            """)
+    Optional<CommuneAddressDataProjection> getCommuneAddressDataById(Integer id);
+
+    @Query(nativeQuery = true, value = """
+            select\s
+            id_gm as id,\s
+            id_pow as countyId,\s
+            nazwa_gminy as name,\s
+            miejscowosc_siedziby as officeLocalityName,\s
+            kod_pocztowy as postalCode,\s
+            miejscowość as locality,\s
+            ulica as street,\s
+            numer_budynku as buildingNumber,\s
+            numer_lokalu as apartmentNumber\s
+            from gminydaneadresowe\s
+            where id_pow = ?1\s
+            order by nazwa_gminy\s
+            offset ?2 rows\s
+            fetch first ?3 row only\s
+            """)
+    List<CommuneAddressDataProjection> getCommuneAddressDataByCountyId(Integer countyId, Integer offsetRows, Integer fetchRows);
 }

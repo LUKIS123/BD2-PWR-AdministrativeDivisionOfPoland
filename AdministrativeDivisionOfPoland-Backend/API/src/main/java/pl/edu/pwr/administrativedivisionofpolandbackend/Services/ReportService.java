@@ -1,5 +1,6 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,14 @@ public class ReportService {
     private final ReportValidator reportValidator;
     private final VoivodeshipRepository voivodeshipRepository;
 
-    public PageResult<ReportDto> getAll(int page, int size){
+    // todo: tylko tymczasowo
+    public PageResult<ReportDto> getAll(int page, int size) {
         List<Report> all = reportRepository.findAll();
-        return getReportDtoPageResult(page, size, all,0);
+        return getReportDtoPageResult(page, size, all, (int) reportRepository.count());
     }
+
     public ReportDto getById(int id) {
-        Report report = reportRepository.findById(id).orElseThrow(() -> new RuntimeException("Report not found"));
+        Report report = reportRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Report not found"));
         return mapToReportDto(report);
     }
 
@@ -84,6 +87,7 @@ public class ReportService {
         var countyName = report.getCounty() == null ? null : report.getCounty().getName();
         var communeId = report.getCommune() == null ? null : report.getCommune().getId();
         var communeName = report.getCommune() == null ? null : report.getCommune().getName();
+        var communeType = report.getCommune() == null ? null : report.getCommune().getCommuneType().getTypeName();
         return new ReportDto(
                 report.getId(),
                 report.getVoivodeship().getId(),
@@ -92,6 +96,7 @@ public class ReportService {
                 countyName,
                 communeId,
                 communeName,
+                communeType,
                 report.getTopic(),
                 report.getContent(),
                 report.getReportingDate()

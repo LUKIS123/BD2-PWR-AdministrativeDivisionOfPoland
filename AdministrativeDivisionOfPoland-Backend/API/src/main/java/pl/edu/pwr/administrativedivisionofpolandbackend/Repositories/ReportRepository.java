@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: poprawic lazy loading tak samo jak w innych repach
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Integer> {
     Optional<Report> findById(int id);

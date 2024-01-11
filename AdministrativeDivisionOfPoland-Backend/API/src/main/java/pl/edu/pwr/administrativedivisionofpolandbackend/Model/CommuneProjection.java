@@ -1,19 +1,19 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Model;
 
 public interface CommuneProjection {
-    public int getId();
+    Integer getId();
 
-    public Integer getCountyId();
+    Integer getCountyId();
 
-    public String getCountyName();
+    String getCountyName();
 
-    public String getName();
+    String getName();
 
-    public int getPopulation();
+    Integer getPopulation();
 
-    public double getArea();
+    Double getArea();
 
-    public String getCommuneType();
+    String getCommuneType();
 
-    public String getTERYTCode();
+    String getTERYTCode();
 }
