@@ -27,6 +27,10 @@ public class ReportService {
     private final ReportValidator reportValidator;
     private final VoivodeshipRepository voivodeshipRepository;
 
+    public PageResult<ReportDto> getAll(int page, int size){
+        List<Report> all = reportRepository.findAll();
+        return getReportDtoPageResult(page, size, all,0);
+    }
     public ReportDto getById(int id) {
         Report report = reportRepository.findById(id).orElseThrow(() -> new RuntimeException("Report not found"));
         return mapToReportDto(report);
