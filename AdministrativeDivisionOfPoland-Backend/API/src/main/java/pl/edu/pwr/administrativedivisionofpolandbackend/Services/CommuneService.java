@@ -104,7 +104,7 @@ public class CommuneService {
     }
 
     public PageResult<CommuneAddressData> getWithAddressDataByCountyId(int countyId, int page, int size) {
-        List<CommuneAddressDataProjection> communeAddressDataByCountyId = communeRepository.getCommuneAddressDataByCountyId(countyId, page, size);
+        List<CommuneAddressDataProjection> communeAddressDataByCountyId = communeRepository.getCommuneAddressDataByCountyId(countyId, size * (page - 1), size);
         Integer communesByCountyIdCount = communeRepository.getCommunesByCountyIdCount(countyId);
         return getCommuneAddressDataFromProjection(page, size, communeAddressDataByCountyId, communesByCountyIdCount);
     }
