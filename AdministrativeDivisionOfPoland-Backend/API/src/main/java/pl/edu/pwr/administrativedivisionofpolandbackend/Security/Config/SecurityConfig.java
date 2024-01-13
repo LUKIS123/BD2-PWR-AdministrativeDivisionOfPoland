@@ -29,7 +29,8 @@ public class SecurityConfig {
             "/api/voivodeship/**",
             "/api/county/**",
             "/api/commune/**",
-            "/api/report/**"
+            "/api/report/**",
+            "/api/address/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFiler;

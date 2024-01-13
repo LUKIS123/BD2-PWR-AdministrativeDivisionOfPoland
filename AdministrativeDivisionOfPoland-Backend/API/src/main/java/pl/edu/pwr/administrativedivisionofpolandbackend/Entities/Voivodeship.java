@@ -2,10 +2,7 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "wojewodztwo")
@@ -13,9 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Voivodeship {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_woj", nullable = false, unique = true, updatable = false)
     private int id;
     @Column(name = "nazwa_wojewodztwa")

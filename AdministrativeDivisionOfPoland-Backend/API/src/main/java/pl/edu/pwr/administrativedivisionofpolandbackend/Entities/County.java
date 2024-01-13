@@ -16,6 +16,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class County {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pow", nullable = false, unique = true, updatable = false)
     private int id;
     @ManyToOne(fetch = FetchType.LAZY)

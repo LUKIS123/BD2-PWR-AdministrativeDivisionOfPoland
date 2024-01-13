@@ -5,14 +5,19 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.VoivodeshipRegisteredOffice;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipExtendedProjection;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRegisteredOfficeRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRepository;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
+import pl.edu.pwr.contract.Voivodeship.AddVoivodeshipRequest;
 
 import java.util.List;
 
@@ -22,6 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VoivodeshipService {
     private final VoivodeshipRepository voivodeshipRepository;
+    private final VoivodeshipRegisteredOfficeRepository voivodeshipRegisteredOfficeRepository;
+    private final RegisteredOfficeAddressesRepository registeredOfficeAddressesRepository;
 
     public PageResult<VoivodeshipDto> getAll(int page, int size) {
         List<Voivodeship> all = voivodeshipRepository.getAll(size * (page - 1), size);
@@ -116,6 +123,48 @@ public class VoivodeshipService {
                 )).toList();
         Integer count = voivodeshipRepository.getCount();
         return new PageResult<>(list, count, size, page);
+    }
+
+    public Integer addVoivodeship(AddVoivodeshipRequest addVoivodeshipRequest) {
+        Voivodeship voivodeship = Voivodeship.builder()
+                .name(addVoivodeshipRequest.name)
+                .licensePlateDifferentiator(addVoivodeshipRequest.licensePlateDifferentiator)
+                .TERYTCode(addVoivodeshipRequest.TERYTCode)
+                .build();
+        Voivodeship saved = voivodeshipRepository.save(voivodeship);
+
+        // Adding first of the offices
+        RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
+                .findById(addVoivodeshipRequest.registeredOfficeAddressesIdFirst)
+                .orElseThrow(() -> new EntityNotFoundException("Address with id: " + addVoivodeshipRequest.registeredOfficeAddressesIdFirst + " not found"));
+
+        VoivodeshipRegisteredOffice first = VoivodeshipRegisteredOffice.builder()
+                .voivodeship(saved)
+                .locality(addVoivodeshipRequest.localityFirst)
+                .isSeatOfCouncil(addVoivodeshipRequest.isSeatOfCouncilFirst)
+                .isSeatOfVoivode(addVoivodeshipRequest.isSeatOfVoivodeFirst)
+                .registeredOfficeAddresses(registeredOfficeAddressFirst)
+                .build();
+
+        voivodeshipRegisteredOfficeRepository.save(first);
+
+        // Adding second office if separate
+        if (addVoivodeshipRequest.registeredOfficeAddressesIdSecond != null) {
+            RegisteredOfficeAddresses registeredOfficeAddressSecond = registeredOfficeAddressesRepository
+                    .findById(addVoivodeshipRequest.registeredOfficeAddressesIdSecond)
+                    .orElseThrow(() -> new EntityNotFoundException("Address with id: " + addVoivodeshipRequest.registeredOfficeAddressesIdSecond + " not found"));
+
+            VoivodeshipRegisteredOffice second = VoivodeshipRegisteredOffice.builder()
+                    .voivodeship(saved)
+                    .locality(addVoivodeshipRequest.localitySecond)
+                    .isSeatOfCouncil(addVoivodeshipRequest.isSeatOfCouncilSecond)
+                    .isSeatOfVoivode(addVoivodeshipRequest.isSeatOfVoivodeSecond)
+                    .registeredOfficeAddresses(registeredOfficeAddressSecond)
+                    .build();
+
+            voivodeshipRegisteredOfficeRepository.save(second);
+        }
+        return saved.getId();
     }
 
 }

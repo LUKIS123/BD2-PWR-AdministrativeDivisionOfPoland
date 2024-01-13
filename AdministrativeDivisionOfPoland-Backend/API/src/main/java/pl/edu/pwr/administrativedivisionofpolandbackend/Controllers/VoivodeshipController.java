@@ -3,11 +3,15 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.VoivodeshipService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
+import pl.edu.pwr.contract.Voivodeship.AddVoivodeshipRequest;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("api/voivodeship")
@@ -57,5 +61,17 @@ public class VoivodeshipController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(voivodeshipService.getAllWithAddressData(page, size));
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<URI> addVoivodeship(
+            @RequestBody AddVoivodeshipRequest addVoivodeshipRequest
+    ) {
+        Integer id = voivodeshipService.addVoivodeship(addVoivodeshipRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/voivodeship/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.created(location).body(location);
     }
 }

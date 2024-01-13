@@ -14,6 +14,14 @@ public interface RegisteredOfficeAddressesRepository extends JpaRepository<Regis
     Optional<RegisteredOfficeAddresses> findById(int id);
 
     @Query(nativeQuery = true, value = """
+            select * from adresy_siedzib\s
+            order by miejscowosc\s
+            offset ?1 rows\s
+            fetch first ?2 row only\s
+            """)
+    List<RegisteredOfficeAddresses> getAll(Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
             select * from adresy_siedzib ad\s
             inner join siedziby_wojewodztw sw on ad.id_adresu_siedziby = sw.id_adresu_siedziby\s
             where sw.id_woj = ?1\s
@@ -32,7 +40,7 @@ public interface RegisteredOfficeAddressesRepository extends JpaRepository<Regis
     @Query(nativeQuery = true, value = """
             select * from adresy_siedzib ad\s
             inner join siedziby_gmin sg on ad.id_adresu_siedziby = sg.id_adresu_siedziby\s
-            where sg.id_woj = ?1\s
+            where sg.id_gm = ?1\s
             order by miejscowosc\s
             """)
     List<RegisteredOfficeAddresses> getRegisteredOfficeAddressByCommuneId(Integer communeId);

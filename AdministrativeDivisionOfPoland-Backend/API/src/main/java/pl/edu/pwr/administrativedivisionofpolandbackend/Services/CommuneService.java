@@ -69,17 +69,14 @@ public class CommuneService {
     }
 
     private CommuneDto mapToCommuneDto(CommuneProjection commune) {
-        var countyId = commune.getCountyId() == null ? null : commune.getCountyId();
-        var countyName = commune.getCountyName() == null ? null : commune.getCountyName();
-        var communeType = commune.getCommuneType() == null ? null : commune.getCommuneType();
         return new CommuneDto(
                 commune.getId(),
-                countyId,
-                countyName,
+                commune.getCountyId(),
+                commune.getCountyName(),
                 commune.getName(),
                 commune.getPopulation(),
                 commune.getArea(),
-                communeType,
+                commune.getCommuneType(),
                 commune.getTERYTCode());
     }
 

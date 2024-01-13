@@ -21,7 +21,7 @@ public class ReportController {
     @GetMapping("/all")
     public ResponseEntity<PageResult<ReportDto>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "15") int size){
+            @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(reportService.getAll(page, size));
     }
 
@@ -57,7 +57,7 @@ public class ReportController {
 
     @SneakyThrows
     @PostMapping("/add")
-    public ResponseEntity<Object> createReport(
+    public ResponseEntity<URI> createReport(
             @RequestBody AddReportRequest addReportRequest
     ) {
         Integer reportId = reportService.createReport(addReportRequest);
