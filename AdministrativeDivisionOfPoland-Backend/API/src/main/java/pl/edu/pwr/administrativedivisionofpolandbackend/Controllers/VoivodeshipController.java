@@ -9,7 +9,7 @@ import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
-import pl.edu.pwr.contract.Voivodeship.AddVoivodeshipRequest;
+import pl.edu.pwr.contract.Voivodeship.VoivodeshipRequest;
 
 import java.net.URI;
 
@@ -65,7 +65,7 @@ public class VoivodeshipController {
 
     @PostMapping("/add")
     public ResponseEntity<URI> addVoivodeship(
-            @RequestBody AddVoivodeshipRequest addVoivodeshipRequest
+            @RequestBody VoivodeshipRequest addVoivodeshipRequest
     ) {
         Integer id = voivodeshipService.addVoivodeship(addVoivodeshipRequest);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -74,4 +74,26 @@ public class VoivodeshipController {
                 .toUri();
         return ResponseEntity.created(location).body(location);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<URI> updateVoivodeship(
+            @PathVariable(value = "id") int id,
+            @RequestBody VoivodeshipRequest voivodeshipRequest
+    ) {
+        voivodeshipService.updateVoivodeship(id, voivodeshipRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/voivodeship/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.created(location).body(location);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteVoivodeship(
+            @PathVariable(value = "id") int id
+    ) {
+        voivodeshipService.deleteVoivodeship(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

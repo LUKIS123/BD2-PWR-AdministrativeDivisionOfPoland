@@ -7,7 +7,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.RegisteredOfficeAddressesService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.OfficeAddressDto;
-import pl.edu.pwr.contract.OfficeAdres.AddOfficeAddressRequest;
+import pl.edu.pwr.contract.OfficeAdres.OfficeAddressRequest;
 
 import java.net.URI;
 
@@ -31,7 +31,7 @@ public class RegisteredOfficeAddressesController {
 
     @PostMapping("/add")
     public ResponseEntity<URI> addOfficeAddress(
-            @RequestBody AddOfficeAddressRequest addOfficeAddressRequest
+            @RequestBody OfficeAddressRequest addOfficeAddressRequest
     ) {
         Integer id = officeAddressesService.addAddress(addOfficeAddressRequest);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -40,4 +40,5 @@ public class RegisteredOfficeAddressesController {
                 .toUri();
         return ResponseEntity.created(location).body(location);
     }
+
 }

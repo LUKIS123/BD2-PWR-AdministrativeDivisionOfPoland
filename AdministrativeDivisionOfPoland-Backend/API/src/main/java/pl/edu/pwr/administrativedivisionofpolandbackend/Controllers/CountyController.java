@@ -3,11 +3,15 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CountyService;
-import pl.edu.pwr.contract.Dtos.CountyAddressData;
-import pl.edu.pwr.contract.Dtos.CountyExtended;
-import pl.edu.pwr.contract.Dtos.CountyDto;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.County.CountyRequest;
+import pl.edu.pwr.contract.Dtos.CountyAddressData;
+import pl.edu.pwr.contract.Dtos.CountyDto;
+import pl.edu.pwr.contract.Dtos.CountyExtended;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("api/county")
@@ -81,6 +85,39 @@ public class CountyController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(countyService.getAllWithAddressData(page, size));
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<URI> addCounty(
+            @RequestBody CountyRequest countyRequest
+    ) {
+        Integer id = countyService.addCounty(countyRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/county/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.created(location).body(location);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<URI> updateCounty(
+            @PathVariable(value = "id") int id,
+            @RequestBody CountyRequest countyRequest
+    ) {
+        countyService.updateCounty(id, countyRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/county/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.created(location).body(location);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteCounty(
+            @PathVariable(value = "id") int id
+    ) {
+        countyService.deleteCounty(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

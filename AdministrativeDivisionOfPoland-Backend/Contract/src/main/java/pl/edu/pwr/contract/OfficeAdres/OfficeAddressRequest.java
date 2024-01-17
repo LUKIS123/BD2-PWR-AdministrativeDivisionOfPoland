@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class AddOfficeAddressRequest {
+public class OfficeAddressRequest {
     public String postalCode;
     public String locality;
     public String street;

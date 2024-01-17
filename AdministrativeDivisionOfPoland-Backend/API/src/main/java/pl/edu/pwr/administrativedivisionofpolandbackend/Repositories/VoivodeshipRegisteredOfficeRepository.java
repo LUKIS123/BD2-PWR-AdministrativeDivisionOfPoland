@@ -13,6 +13,10 @@ public interface VoivodeshipRegisteredOfficeRepository extends JpaRepository<Voi
 
     Optional<VoivodeshipRegisteredOffice> findById(int id);
 
+    Optional<VoivodeshipRegisteredOffice> findVoivodeshipRegisteredOfficeByVoivodeshipIdAndSeatOfCouncil(int voivodeshipId, boolean seatOfCouncil);
+
+    Optional<VoivodeshipRegisteredOffice> findVoivodeshipRegisteredOfficeByVoivodeshipIAndSeatOfVoivode(int voivodeshipId, boolean seatOfVoivode);
+
     @Query(nativeQuery = true, value = """
             select * from siedziby_wojewodztw\s
             where id_woj = ?1\s

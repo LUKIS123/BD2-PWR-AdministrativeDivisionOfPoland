@@ -10,6 +10,7 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneAddressData
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CommuneRepository;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.Commune.CommuneRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
 
@@ -122,4 +123,15 @@ public class CommuneService {
         return new PageResult<>(dtos, count, size, page);
     }
 
+    public Integer addCommune(CommuneRequest communeRequest) {
+        return null;
+    }
+
+    public void updateCounty(int id, CommuneRequest communeRequest) {
+
+    }
+
+    public void deleteCommune(int id) {
+        
+    }
 }

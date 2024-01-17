@@ -17,7 +17,7 @@ import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
-import pl.edu.pwr.contract.Voivodeship.AddVoivodeshipRequest;
+import pl.edu.pwr.contract.Voivodeship.VoivodeshipRequest;
 
 import java.util.List;
 
@@ -125,7 +125,7 @@ public class VoivodeshipService {
         return new PageResult<>(list, count, size, page);
     }
 
-    public Integer addVoivodeship(AddVoivodeshipRequest addVoivodeshipRequest) {
+    public Integer addVoivodeship(VoivodeshipRequest addVoivodeshipRequest) {
         Voivodeship voivodeship = Voivodeship.builder()
                 .name(addVoivodeshipRequest.name)
                 .licensePlateDifferentiator(addVoivodeshipRequest.licensePlateDifferentiator)
@@ -165,6 +165,160 @@ public class VoivodeshipService {
             voivodeshipRegisteredOfficeRepository.save(second);
         }
         return saved.getId();
+    }
+
+    public void updateVoivodeship(int id, VoivodeshipRequest voivodeshipRequest) {
+        Voivodeship voivodeship = voivodeshipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
+
+        if (voivodeshipRequest.name != null) {
+            voivodeship.setName(voivodeshipRequest.name);
+        }
+        if (voivodeshipRequest.licensePlateDifferentiator != null) {
+            voivodeship.setLicensePlateDifferentiator(voivodeshipRequest.licensePlateDifferentiator);
+        }
+        if (voivodeshipRequest.TERYTCode != null) {
+            voivodeship.setTERYTCode(voivodeshipRequest.TERYTCode);
+        }
+
+        List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId = voivodeshipRegisteredOfficeRepository.getVoivodeshipOfficeByVoivodeshipId(id);
+
+        if (voivodeshipOfficeByVoivodeshipId.size() > 1) {
+            updateVoivodeshipBothSeats(id, voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
+        } else {
+            updateVoivodeshipSeat(id, voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
+        }
+
+        voivodeshipRepository.save(voivodeship);
+    }
+
+    private void updateVoivodeshipSeat(int id, VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
+        VoivodeshipRegisteredOffice seat = voivodeshipOfficeByVoivodeshipId.stream().findFirst().orElseThrow(() -> new EntityNotFoundException("Seat not found"));
+        if (request.registeredOfficeAddressesIdFirst != null) {
+            RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
+                    .findById(request.registeredOfficeAddressesIdFirst)
+                    .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdFirst + " not found"));
+            seat.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
+        }
+        if (request.localityFirst != null) {
+            seat.setLocality(request.localityFirst);
+        }
+        if (request.isSeatOfCouncilFirst != null) {
+            seat.setSeatOfCouncil(request.isSeatOfCouncilFirst);
+        }
+        if (request.isSeatOfVoivodeSecond != null) {
+            seat.setSeatOfVoivode(request.isSeatOfVoivodeFirst);
+        }
+
+        if (request.registeredOfficeAddressesIdSecond != null) {
+            RegisteredOfficeAddresses registeredOfficeAddressSecond = registeredOfficeAddressesRepository
+                    .findById(request.registeredOfficeAddressesIdSecond)
+                    .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdSecond + " not found"));
+            seat.setRegisteredOfficeAddresses(registeredOfficeAddressSecond);
+
+            new VoivodeshipRegisteredOffice();
+            VoivodeshipRegisteredOffice voivodeshipRegisteredOffice = VoivodeshipRegisteredOffice.builder()
+                    .registeredOfficeAddresses(registeredOfficeAddressSecond)
+                    .locality(request.localitySecond)
+                    .isSeatOfCouncil(request.isSeatOfCouncilSecond)
+                    .isSeatOfVoivode(request.isSeatOfVoivodeSecond)
+                    .build();
+
+            voivodeshipRegisteredOfficeRepository.save(voivodeshipRegisteredOffice);
+        }
+
+        voivodeshipRegisteredOfficeRepository.save(seat);
+    }
+
+    private void updateVoivodeshipBothSeats(int id, VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
+        VoivodeshipRegisteredOffice seatOfCouncil = voivodeshipOfficeByVoivodeshipId.stream()
+                .filter(VoivodeshipRegisteredOffice::isSeatOfCouncil)
+                .findFirst().orElseThrow(() -> new EntityNotFoundException("Seat of council not found"));
+
+        VoivodeshipRegisteredOffice seatOfVoivode = voivodeshipOfficeByVoivodeshipId.stream()
+                .filter(VoivodeshipRegisteredOffice::isSeatOfVoivode)
+                .findFirst().orElseThrow(() -> new EntityNotFoundException("Seat of voivode not found"));
+
+        // Z 2 siedzib zmiana na 1 wspolna
+        if (request.isSeatOfCouncilFirst != null && request.isSeatOfCouncilFirst && request.isSeatOfVoivodeFirst != null && request.isSeatOfVoivodeFirst) {
+
+            seatOfCouncil.setSeatOfCouncil(true);
+            seatOfCouncil.setSeatOfVoivode(true);
+
+            if (request.localityFirst != null) {
+                seatOfCouncil.setLocality(request.localityFirst);
+            }
+            if (request.registeredOfficeAddressesIdFirst != null) {
+                RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
+                        .findById(request.registeredOfficeAddressesIdFirst)
+                        .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdFirst + " not found"));
+
+                seatOfCouncil.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
+            }
+            voivodeshipRegisteredOfficeRepository.save(seatOfCouncil);
+            voivodeshipRegisteredOfficeRepository.delete(seatOfVoivode);
+            return;
+        }
+
+        // Pozostaja 2 siedziby
+        if (request.registeredOfficeAddressesIdFirst != null) {
+            if (request.isSeatOfCouncilFirst != null && request.isSeatOfCouncilFirst) {
+                RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
+                        .findById(request.registeredOfficeAddressesIdFirst)
+                        .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdFirst + " not found"));
+
+                seatOfCouncil.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
+
+                if (request.localityFirst != null) {
+                    seatOfCouncil.setLocality(request.localityFirst);
+                }
+
+            } else if (request.isSeatOfCouncilFirst != null && request.isSeatOfVoivodeFirst) {
+                RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
+                        .findById(request.registeredOfficeAddressesIdFirst)
+                        .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdFirst + " not found"));
+
+                seatOfVoivode.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
+
+                if (request.localityFirst != null) {
+                    seatOfVoivode.setLocality(request.localityFirst);
+                }
+            }
+        }
+
+        if (request.registeredOfficeAddressesIdSecond != null) {
+            if (request.isSeatOfCouncilSecond != null && request.isSeatOfCouncilSecond) {
+                RegisteredOfficeAddresses registeredOfficeAddressSecond = registeredOfficeAddressesRepository
+                        .findById(request.registeredOfficeAddressesIdSecond)
+                        .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdSecond + " not found"));
+
+                seatOfCouncil.setRegisteredOfficeAddresses(registeredOfficeAddressSecond);
+
+                if (request.localitySecond != null) {
+                    seatOfCouncil.setLocality(request.localitySecond);
+                }
+
+            } else if (request.isSeatOfCouncilSecond != null && request.isSeatOfVoivodeSecond) {
+                RegisteredOfficeAddresses registeredOfficeAddressSecond = registeredOfficeAddressesRepository
+                        .findById(request.registeredOfficeAddressesIdSecond)
+                        .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdSecond + " not found"));
+
+                seatOfVoivode.setRegisteredOfficeAddresses(registeredOfficeAddressSecond);
+
+                if (request.localitySecond != null) {
+                    seatOfVoivode.setLocality(request.localitySecond);
+                }
+            }
+        }
+
+        voivodeshipRegisteredOfficeRepository.save(seatOfCouncil);
+        voivodeshipRegisteredOfficeRepository.save(seatOfVoivode);
+    }
+
+    public void deleteVoivodeship(int id) {
+        if (!voivodeshipRepository.existsById(id)) {
+            throw new EntityNotFoundException("Voivodeship with ID " + id + " not found");
+        }
+        voivodeshipRepository.deleteById(id);
     }
 
 }
