@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.ReportService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.ReportDto;
 import pl.edu.pwr.contract.Reports.AddReportRequest;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("api/report")
@@ -57,15 +54,10 @@ public class ReportController {
 
     @SneakyThrows
     @PostMapping("/add")
-    public ResponseEntity<URI> createReport(
+    public Integer createReport(
             @RequestBody AddReportRequest addReportRequest
     ) {
-        Integer reportId = reportService.createReport(addReportRequest);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/report/{id}")
-                .buildAndExpand(reportId)
-                .toUri();
-        return ResponseEntity.created(location).body(location);
+        return reportService.createReport(addReportRequest);
     }
 
 }

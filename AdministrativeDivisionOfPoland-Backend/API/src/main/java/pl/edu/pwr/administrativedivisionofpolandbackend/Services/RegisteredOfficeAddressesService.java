@@ -9,7 +9,7 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOffic
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.OfficeAddressDto;
-import pl.edu.pwr.contract.OfficeAdres.AddOfficeAddressRequest;
+import pl.edu.pwr.contract.OfficeAdres.OfficeAddressRequest;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class RegisteredOfficeAddressesService {
         return new PageResult<>(officeAddressDtos, (int) officeAddressesRepository.count(), size, page);
     }
 
-    public Integer addAddress(AddOfficeAddressRequest addOfficeAddressRequest) {
+    public Integer addAddress(OfficeAddressRequest addOfficeAddressRequest) {
         RegisteredOfficeAddresses newAddress = RegisteredOfficeAddresses.builder()
                 .postalCode(addOfficeAddressRequest.postalCode)
                 .locality(addOfficeAddressRequest.locality)

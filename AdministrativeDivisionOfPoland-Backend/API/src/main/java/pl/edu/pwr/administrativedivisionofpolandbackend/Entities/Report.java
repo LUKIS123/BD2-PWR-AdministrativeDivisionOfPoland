@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Report {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zgl", nullable = false, unique = true, updatable = false)
     private int id;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class CommuneHistory {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zm", nullable = false, unique = true, updatable = false)
     private int id;
     @Column(name = "id_gm")

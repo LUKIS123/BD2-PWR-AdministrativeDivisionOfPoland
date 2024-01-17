@@ -3,10 +3,14 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CommuneService;
+import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.Commune.CommuneRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
-import pl.edu.pwr.contract.Common.PageResult;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("api/commune")
@@ -60,6 +64,34 @@ public class CommuneController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(communeService.getWithAddressDataByCountyId(countyId, page, size));
+    }
+
+    @PostMapping("/add")
+    public Integer addCommune(
+            @RequestBody CommuneRequest communeRequest
+    ) {
+        return communeService.addCommune(communeRequest);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<URI> updateCommune(
+            @PathVariable(value = "id") int id,
+            @RequestBody CommuneRequest communeRequest
+    ) {
+        communeService.updateCounty(id, communeRequest);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/commune/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        return ResponseEntity.ok(location);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteCommune(
+            @PathVariable(value = "id") int id
+    ) {
+        communeService.deleteCommune(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

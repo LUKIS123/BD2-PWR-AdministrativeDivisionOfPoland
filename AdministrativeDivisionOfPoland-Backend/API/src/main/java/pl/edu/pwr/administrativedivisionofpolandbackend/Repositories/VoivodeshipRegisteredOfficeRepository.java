@@ -3,6 +3,7 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.VoivodeshipRegisteredOffice;
 
 import java.util.List;

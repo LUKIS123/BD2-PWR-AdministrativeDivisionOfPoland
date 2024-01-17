@@ -6,11 +6,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.CountyRegisteredOffice;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyProjection;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRegisteredOfficeRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRepository;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.County.CountyRequest;
 import pl.edu.pwr.contract.Dtos.CountyAddressData;
 import pl.edu.pwr.contract.Dtos.CountyExtended;
 import pl.edu.pwr.contract.Dtos.CountyDto;
@@ -23,6 +31,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CountyService {
     private final CountyRepository countyRepository;
+    private final VoivodeshipRepository voivodeshipRepository;
+    private final CountyRegisteredOfficeRepository countyRegisteredOfficeRepository;
+    private final RegisteredOfficeAddressesRepository addressesRepository;
 
     public PageResult<CountyDto> getAll(int page, int size) {
         List<CountyProjection> all = countyRepository.getAll(size * (page - 1), size);
@@ -31,7 +42,9 @@ public class CountyService {
     }
 
     public CountyDto get(int id) {
-        County county = countyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("County not found"));
+        County county = countyRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("County not found"));
         return mapToCountyDto(county);
     }
 
@@ -169,4 +182,94 @@ public class CountyService {
         return new PageResult<>(list, count, size, page);
     }
 
+    public Integer addCounty(CountyRequest countyRequest) {
+        Voivodeship voivodeship = voivodeshipRepository
+                .findById(countyRequest.voivodeshipId)
+                .orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
+
+        County county = County.builder()
+                .name(countyRequest.name)
+                .voivodeship(voivodeship)
+                .isCityWithCountyRights(countyRequest.isCityWithCountyRights)
+                .licensePlateDifferentiator(countyRequest.licensePlateDifferentiator)
+                .TERYTCode(countyRequest.terytCode)
+                .build();
+        County save = countyRepository.save(county);
+
+        if (countyRequest.registeredOfficeAddressesId == null) {
+            throw new InvalidRequestException("Registered office address id is required");
+        }
+
+        RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
+                .findById(countyRequest.registeredOfficeAddressesId)
+                .orElseThrow(() -> new EntityNotFoundException("Address with id: " + countyRequest.registeredOfficeAddressesId + " not found"));
+
+        CountyRegisteredOffice countyRegisteredOffice = CountyRegisteredOffice.builder()
+                .county(save)
+                .locality(countyRequest.locality)
+                .registeredOfficeAddresses(registeredOfficeAddress)
+                .build();
+
+        countyRegisteredOfficeRepository.save(countyRegisteredOffice);
+
+        return save.getId();
+    }
+
+    public void updateCounty(int id, CountyRequest countyRequest) {
+        County county = countyRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("County not found"));
+
+        if (countyRequest.voivodeshipId != null) {
+            Voivodeship voivodeship = voivodeshipRepository.findById(countyRequest.voivodeshipId)
+                    .orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
+
+            county.setVoivodeship(voivodeship);
+        }
+        if (countyRequest.name != null) {
+            county.setName(countyRequest.name);
+        }
+        if (countyRequest.isCityWithCountyRights != null) {
+            county.setCityWithCountyRights(countyRequest.isCityWithCountyRights);
+        }
+        if (countyRequest.licensePlateDifferentiator != null) {
+            county.setLicensePlateDifferentiator(countyRequest.licensePlateDifferentiator);
+        }
+        if (countyRequest.terytCode != null) {
+            county.setTERYTCode(countyRequest.terytCode);
+        }
+        countyRepository.save(county);
+
+
+        if (countyRequest.registeredOfficeAddressesId == null && countyRequest.locality == null) {
+            return;
+        }
+
+        CountyRegisteredOffice countyRegisteredOffice = countyRegisteredOfficeRepository
+                .getCountyOfficeByCountyId(county.getId())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("County registered office not found"));
+
+        if (countyRequest.locality != null) {
+            countyRegisteredOffice.setLocality(countyRequest.locality);
+        }
+
+        if (countyRequest.registeredOfficeAddressesId != null) {
+            RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
+                    .findById(countyRequest.registeredOfficeAddressesId)
+                    .orElseThrow(() -> new EntityNotFoundException("Address with id: " + countyRequest.registeredOfficeAddressesId + " not found"));
+
+            countyRegisteredOffice.setRegisteredOfficeAddresses(registeredOfficeAddress);
+        }
+
+        countyRegisteredOfficeRepository.save(countyRegisteredOffice);
+    }
+
+    public void deleteCounty(int id) {
+        if (!countyRepository.existsById(id)) {
+            throw new EntityNotFoundException("County not found");
+        }
+        countyRepository.deleteById(id);
+    }
 }

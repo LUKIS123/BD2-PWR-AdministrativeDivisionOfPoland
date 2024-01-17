@@ -5,11 +5,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Commune;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.*;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneProjection;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CommuneRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.*;
 import pl.edu.pwr.contract.Common.PageResult;
+import pl.edu.pwr.contract.Commune.CommuneRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
 
@@ -21,6 +23,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommuneService {
     private final CommuneRepository communeRepository;
+    private final CommuneRegisteredOfficeRepository communeRegisteredOfficeRepository;
+    private final CommuneTypeRepository communeTypeRepository;
+    private final CountyRepository countyRepository;
+    private final RegisteredOfficeAddressesRepository addressesRepository;
 
     public PageResult<CommuneDto> getAll(int page, int size) {
         List<CommuneProjection> all = communeRepository.getAll(size * (page - 1), size);
@@ -120,6 +126,110 @@ public class CommuneService {
                         x.getApartmentNumber()))
                 .toList();
         return new PageResult<>(dtos, count, size, page);
+    }
+
+    public Integer addCommune(CommuneRequest communeRequest) {
+        County county = countyRepository
+                .findById(communeRequest.countyId)
+                .orElseThrow(() -> new EntityNotFoundException("County not found"));
+
+        CommuneType communeType = communeTypeRepository
+                .findById(communeRequest.countyId)
+                .orElseThrow(() -> new EntityNotFoundException("Commune Type not found"));
+
+        Commune commune = Commune.builder()
+                .county(county)
+                .name(communeRequest.name)
+                .population(communeRequest.population)
+                .are(communeRequest.are)
+                .communeType(communeType)
+                .TERYTCode(communeRequest.terytCode)
+                .build();
+        Commune save = communeRepository.save(commune);
+
+        if (communeRequest.registeredOfficeAddressesId == null) {
+            throw new InvalidRequestException("Registered office address id is required");
+        }
+
+        RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
+                .findById(communeRequest.registeredOfficeAddressesId)
+                .orElseThrow(() -> new EntityNotFoundException("Address with id: " + communeRequest.registeredOfficeAddressesId + " not found"));
+
+        CommuneRegisteredOffice communeRegisteredOffice = CommuneRegisteredOffice.builder()
+                .commune(save)
+                .locality(communeRequest.locality)
+                .registeredOfficeAddresses(registeredOfficeAddress)
+                .build();
+
+        communeRegisteredOfficeRepository.save(communeRegisteredOffice);
+
+        return save.getId();
+    }
+
+    public void updateCounty(int id, CommuneRequest communeRequest) {
+        Commune commune = communeRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Commune not found"));
+
+        if (communeRequest.countyId != null) {
+            County county = countyRepository
+                    .findById(communeRequest.countyId)
+                    .orElseThrow(() -> new EntityNotFoundException("County not found"));
+
+            commune.setCounty(county);
+        }
+        if (communeRequest.name != null) {
+            commune.setName(communeRequest.name);
+        }
+        if (communeRequest.population != null) {
+            commune.setPopulation(communeRequest.population);
+        }
+        if (communeRequest.are != null) {
+            commune.setAre(communeRequest.are);
+        }
+        if (communeRequest.communeTypeId != null) {
+            CommuneType communeType = communeTypeRepository
+                    .findById(communeRequest.communeTypeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Commune Type not found"));
+
+            commune.setCommuneType(communeType);
+        }
+        if (communeRequest.terytCode != null) {
+            commune.setTERYTCode(communeRequest.terytCode);
+        }
+
+        communeRepository.save(commune);
+
+        if (communeRequest.registeredOfficeAddressesId == null && communeRequest.locality == null) {
+            return;
+        }
+
+        CommuneRegisteredOffice communeRegisteredOffice = communeRegisteredOfficeRepository
+                .getCommuneOfficeByCommuneId(id)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Commune registered office not found"));
+
+        if (communeRequest.locality != null) {
+            communeRegisteredOffice.setLocality(communeRequest.locality);
+        }
+
+        if (communeRequest.registeredOfficeAddressesId != null) {
+            RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
+                    .findById(communeRequest.registeredOfficeAddressesId)
+                    .orElseThrow(() -> new EntityNotFoundException("Address with id: " + communeRequest.registeredOfficeAddressesId + " not found"));
+
+            communeRegisteredOffice.setRegisteredOfficeAddresses(registeredOfficeAddress);
+        }
+
+        communeRegisteredOfficeRepository.save(communeRegisteredOffice);
+    }
+
+    public void deleteCommune(int id) {
+        if (!communeRepository.existsById(id)) {
+            throw new EntityNotFoundException("Commune not found");
+        }
+        communeRepository.deleteById(id);
     }
 
 }
