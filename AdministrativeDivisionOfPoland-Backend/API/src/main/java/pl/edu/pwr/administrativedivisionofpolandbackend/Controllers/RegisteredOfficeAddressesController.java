@@ -3,13 +3,10 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.RegisteredOfficeAddressesService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.OfficeAddressDto;
 import pl.edu.pwr.contract.OfficeAdres.OfficeAddressRequest;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("api/address")
@@ -30,15 +27,10 @@ public class RegisteredOfficeAddressesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<URI> addOfficeAddress(
+    public Integer addOfficeAddress(
             @RequestBody OfficeAddressRequest addOfficeAddressRequest
     ) {
-        Integer id = officeAddressesService.addAddress(addOfficeAddressRequest);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/address/{id}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(location).body(location);
+        return officeAddressesService.addAddress(addOfficeAddressRequest);
     }
 
 }

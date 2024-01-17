@@ -3,6 +3,7 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.VoivodeshipRegisteredOffice;
 
 import java.util.List;
@@ -12,10 +13,6 @@ import java.util.Optional;
 public interface VoivodeshipRegisteredOfficeRepository extends JpaRepository<VoivodeshipRegisteredOffice, Integer> {
 
     Optional<VoivodeshipRegisteredOffice> findById(int id);
-
-    Optional<VoivodeshipRegisteredOffice> findVoivodeshipRegisteredOfficeByVoivodeshipIdAndSeatOfCouncil(int voivodeshipId, boolean seatOfCouncil);
-
-    Optional<VoivodeshipRegisteredOffice> findVoivodeshipRegisteredOfficeByVoivodeshipIAndSeatOfVoivode(int voivodeshipId, boolean seatOfVoivode);
 
     @Query(nativeQuery = true, value = """
             select * from siedziby_wojewodztw\s

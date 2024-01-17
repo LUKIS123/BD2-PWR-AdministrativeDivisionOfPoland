@@ -192,7 +192,7 @@ public class CountyService {
                 .voivodeship(voivodeship)
                 .isCityWithCountyRights(countyRequest.isCityWithCountyRights)
                 .licensePlateDifferentiator(countyRequest.licensePlateDifferentiator)
-                .TERYTCode(countyRequest.TERYTCode)
+                .TERYTCode(countyRequest.terytCode)
                 .build();
         County save = countyRepository.save(county);
 
@@ -235,8 +235,8 @@ public class CountyService {
         if (countyRequest.licensePlateDifferentiator != null) {
             county.setLicensePlateDifferentiator(countyRequest.licensePlateDifferentiator);
         }
-        if (countyRequest.TERYTCode != null) {
-            county.setTERYTCode(countyRequest.TERYTCode);
+        if (countyRequest.terytCode != null) {
+            county.setTERYTCode(countyRequest.terytCode);
         }
         countyRepository.save(county);
 

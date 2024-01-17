@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 public class UserEligibility {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_upr", nullable = false, unique = true, insertable = false, updatable = false)
     private int id;
 

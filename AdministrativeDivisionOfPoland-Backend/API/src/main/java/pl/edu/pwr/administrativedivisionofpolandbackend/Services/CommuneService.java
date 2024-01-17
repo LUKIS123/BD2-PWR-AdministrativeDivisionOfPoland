@@ -143,7 +143,7 @@ public class CommuneService {
                 .population(communeRequest.population)
                 .are(communeRequest.are)
                 .communeType(communeType)
-                .TERYTCode(communeRequest.TERYTCode)
+                .TERYTCode(communeRequest.terytCode)
                 .build();
         Commune save = communeRepository.save(commune);
 
@@ -194,8 +194,8 @@ public class CommuneService {
 
             commune.setCommuneType(communeType);
         }
-        if (communeRequest.TERYTCode != null) {
-            commune.setTERYTCode(communeRequest.TERYTCode);
+        if (communeRequest.terytCode != null) {
+            commune.setTERYTCode(communeRequest.terytCode);
         }
 
         communeRepository.save(commune);

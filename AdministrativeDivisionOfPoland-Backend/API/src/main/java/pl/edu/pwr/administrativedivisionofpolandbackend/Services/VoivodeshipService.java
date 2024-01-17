@@ -130,7 +130,7 @@ public class VoivodeshipService {
         Voivodeship voivodeship = Voivodeship.builder()
                 .name(addVoivodeshipRequest.name)
                 .licensePlateDifferentiator(addVoivodeshipRequest.licensePlateDifferentiator)
-                .TERYTCode(addVoivodeshipRequest.TERYTCode)
+                .TERYTCode(addVoivodeshipRequest.terytCode)
                 .build();
         Voivodeship saved = voivodeshipRepository.save(voivodeship);
 
@@ -181,8 +181,8 @@ public class VoivodeshipService {
         if (voivodeshipRequest.licensePlateDifferentiator != null) {
             voivodeship.setLicensePlateDifferentiator(voivodeshipRequest.licensePlateDifferentiator);
         }
-        if (voivodeshipRequest.TERYTCode != null) {
-            voivodeship.setTERYTCode(voivodeshipRequest.TERYTCode);
+        if (voivodeshipRequest.terytCode != null) {
+            voivodeship.setTERYTCode(voivodeshipRequest.terytCode);
         }
 
         voivodeshipRepository.save(voivodeship);
@@ -197,14 +197,16 @@ public class VoivodeshipService {
         List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId = voivodeshipRegisteredOfficeRepository.getVoivodeshipOfficeByVoivodeshipId(id);
 
         if (voivodeshipOfficeByVoivodeshipId.size() > 1) {
-            updateVoivodeshipBothSeats(id, voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
+            updateVoivodeshipBothSeats(voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
         } else {
-            updateVoivodeshipSeat(id, voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
+            updateVoivodeshipSeat(voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
         }
     }
 
-    private void updateVoivodeshipSeat(int id, VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
-        VoivodeshipRegisteredOffice seat = voivodeshipOfficeByVoivodeshipId.stream().findFirst().orElseThrow(() -> new EntityNotFoundException("Seat not found"));
+    private void updateVoivodeshipSeat(VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
+        VoivodeshipRegisteredOffice seat = voivodeshipOfficeByVoivodeshipId.stream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Seat not found"));
         if (request.registeredOfficeAddressesIdFirst != null) {
             RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
                     .findById(request.registeredOfficeAddressesIdFirst)
@@ -217,7 +219,7 @@ public class VoivodeshipService {
         if (request.isSeatOfCouncilFirst != null) {
             seat.setSeatOfCouncil(request.isSeatOfCouncilFirst);
         }
-        if (request.isSeatOfVoivodeSecond != null) {
+        if (request.isSeatOfVoivodeFirst != null) {
             seat.setSeatOfVoivode(request.isSeatOfVoivodeFirst);
         }
 
@@ -229,6 +231,7 @@ public class VoivodeshipService {
 
             new VoivodeshipRegisteredOffice();
             VoivodeshipRegisteredOffice voivodeshipRegisteredOffice = VoivodeshipRegisteredOffice.builder()
+                    .voivodeship(seat.getVoivodeship())
                     .registeredOfficeAddresses(registeredOfficeAddressSecond)
                     .locality(request.localitySecond)
                     .isSeatOfCouncil(request.isSeatOfCouncilSecond)
@@ -241,7 +244,7 @@ public class VoivodeshipService {
         voivodeshipRegisteredOfficeRepository.save(seat);
     }
 
-    private void updateVoivodeshipBothSeats(int id, VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
+    private void updateVoivodeshipBothSeats(VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
         VoivodeshipRegisteredOffice seatOfCouncil = voivodeshipOfficeByVoivodeshipId.stream()
                 .filter(VoivodeshipRegisteredOffice::isSeatOfCouncil)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Seat of council not found"));

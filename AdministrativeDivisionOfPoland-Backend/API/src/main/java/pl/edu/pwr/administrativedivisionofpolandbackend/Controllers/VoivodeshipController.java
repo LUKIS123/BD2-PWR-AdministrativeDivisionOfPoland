@@ -64,15 +64,10 @@ public class VoivodeshipController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<URI> addVoivodeship(
+    public Integer addVoivodeship(
             @RequestBody VoivodeshipRequest addVoivodeshipRequest
     ) {
-        Integer id = voivodeshipService.addVoivodeship(addVoivodeshipRequest);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/voivodeship/{id}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(location).body(location);
+        return voivodeshipService.addVoivodeship(addVoivodeshipRequest);
     }
 
     @PutMapping("/update/{id}")
@@ -85,7 +80,7 @@ public class VoivodeshipController {
                 .path("/api/voivodeship/{id}")
                 .buildAndExpand(id)
                 .toUri();
-        return ResponseEntity.created(location).body(location);
+        return ResponseEntity.ok(location);
     }
 
     @DeleteMapping("/delete/{id}")

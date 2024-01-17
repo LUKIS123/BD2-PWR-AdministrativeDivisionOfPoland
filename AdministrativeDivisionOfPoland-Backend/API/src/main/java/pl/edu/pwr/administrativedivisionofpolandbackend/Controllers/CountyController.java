@@ -88,15 +88,10 @@ public class CountyController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<URI> addCounty(
+    public Integer addCounty(
             @RequestBody CountyRequest countyRequest
     ) {
-        Integer id = countyService.addCounty(countyRequest);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/county/{id}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(location).body(location);
+        return countyService.addCounty(countyRequest);
     }
 
     @PutMapping("/update/{id}")
@@ -109,7 +104,7 @@ public class CountyController {
                 .path("/api/county/{id}")
                 .buildAndExpand(id)
                 .toUri();
-        return ResponseEntity.created(location).body(location);
+        return ResponseEntity.ok(location);
     }
 
     @DeleteMapping("/delete/{id}")

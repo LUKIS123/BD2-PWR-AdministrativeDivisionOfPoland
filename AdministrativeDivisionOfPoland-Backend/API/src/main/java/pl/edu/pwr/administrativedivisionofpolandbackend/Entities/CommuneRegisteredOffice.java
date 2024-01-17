@@ -14,6 +14,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class CommuneRegisteredOffice {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_siedz", nullable = false, unique = true, updatable = false)
     private int id;
     @OneToOne(fetch = FetchType.LAZY)

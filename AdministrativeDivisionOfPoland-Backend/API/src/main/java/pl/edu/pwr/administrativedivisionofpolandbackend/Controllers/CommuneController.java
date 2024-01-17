@@ -5,11 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CommuneService;
+import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Commune.CommuneRequest;
-import pl.edu.pwr.contract.County.CountyRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
-import pl.edu.pwr.contract.Common.PageResult;
 
 import java.net.URI;
 
@@ -68,15 +67,10 @@ public class CommuneController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<URI> addCommune(
+    public Integer addCommune(
             @RequestBody CommuneRequest communeRequest
     ) {
-        Integer id = communeService.addCommune(communeRequest);
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/commune/{id}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(location).body(location);
+        return communeService.addCommune(communeRequest);
     }
 
     @PutMapping("/update/{id}")
@@ -89,7 +83,7 @@ public class CommuneController {
                 .path("/api/commune/{id}")
                 .buildAndExpand(id)
                 .toUri();
-        return ResponseEntity.created(location).body(location);
+        return ResponseEntity.ok(location);
     }
 
     @DeleteMapping("/delete/{id}")
