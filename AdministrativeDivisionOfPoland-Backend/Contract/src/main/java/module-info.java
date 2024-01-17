@@ -13,4 +13,10 @@ module AdministrativeDivisionOfPoland.Backend.Contract.main {
 
     exports pl.edu.pwr.contract.Dtos;
     opens pl.edu.pwr.contract.Dtos;
+
+    exports pl.edu.pwr.contract.Voivodeship;
+    opens pl.edu.pwr.contract.Voivodeship;
+
+    exports pl.edu.pwr.contract.OfficeAdres;
+    opens pl.edu.pwr.contract.OfficeAdres;
 }
