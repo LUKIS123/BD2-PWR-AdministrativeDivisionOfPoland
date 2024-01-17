@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.VoivodeshipRegisteredOffice;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
@@ -134,6 +135,10 @@ public class VoivodeshipService {
         Voivodeship saved = voivodeshipRepository.save(voivodeship);
 
         // Adding first of the offices
+        if (addVoivodeshipRequest.registeredOfficeAddressesIdFirst == null) {
+            throw new InvalidRequestException("One office is required");
+        }
+
         RegisteredOfficeAddresses registeredOfficeAddressFirst = registeredOfficeAddressesRepository
                 .findById(addVoivodeshipRequest.registeredOfficeAddressesIdFirst)
                 .orElseThrow(() -> new EntityNotFoundException("Address with id: " + addVoivodeshipRequest.registeredOfficeAddressesIdFirst + " not found"));
@@ -180,6 +185,15 @@ public class VoivodeshipService {
             voivodeship.setTERYTCode(voivodeshipRequest.TERYTCode);
         }
 
+        voivodeshipRepository.save(voivodeship);
+
+        if (voivodeshipRequest.registeredOfficeAddressesIdFirst == null &&
+            voivodeshipRequest.localityFirst == null &&
+            voivodeshipRequest.isSeatOfCouncilFirst == null &&
+            voivodeshipRequest.isSeatOfVoivodeFirst == null) {
+            return;
+        }
+
         List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId = voivodeshipRegisteredOfficeRepository.getVoivodeshipOfficeByVoivodeshipId(id);
 
         if (voivodeshipOfficeByVoivodeshipId.size() > 1) {
@@ -187,8 +201,6 @@ public class VoivodeshipService {
         } else {
             updateVoivodeshipSeat(id, voivodeshipRequest, voivodeshipOfficeByVoivodeshipId);
         }
-
-        voivodeshipRepository.save(voivodeship);
     }
 
     private void updateVoivodeshipSeat(int id, VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {

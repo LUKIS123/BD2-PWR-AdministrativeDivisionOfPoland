@@ -9,6 +9,7 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.CountyRegisteredOffice;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyProjection;
@@ -195,12 +196,16 @@ public class CountyService {
                 .build();
         County save = countyRepository.save(county);
 
+        if (countyRequest.registeredOfficeAddressesId == null) {
+            throw new InvalidRequestException("Registered office address id is required");
+        }
+
         RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
                 .findById(countyRequest.registeredOfficeAddressesId)
                 .orElseThrow(() -> new EntityNotFoundException("Address with id: " + countyRequest.registeredOfficeAddressesId + " not found"));
 
         CountyRegisteredOffice countyRegisteredOffice = CountyRegisteredOffice.builder()
-                .county(county)
+                .county(save)
                 .locality(countyRequest.locality)
                 .registeredOfficeAddresses(registeredOfficeAddress)
                 .build();
@@ -235,6 +240,10 @@ public class CountyService {
         }
         countyRepository.save(county);
 
+
+        if (countyRequest.registeredOfficeAddressesId == null && countyRequest.locality == null) {
+            return;
+        }
 
         CountyRegisteredOffice countyRegisteredOffice = countyRegisteredOfficeRepository
                 .getCountyOfficeByCountyId(county.getId())
