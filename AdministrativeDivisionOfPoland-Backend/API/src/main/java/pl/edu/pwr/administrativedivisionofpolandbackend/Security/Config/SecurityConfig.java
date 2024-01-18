@@ -26,7 +26,7 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/auth/**",
-            "/api/voivodeship/**",
+//            "/api/voivodeship/**",
             "/api/county/**",
             "/api/commune/**",
             "/api/report/**",
@@ -37,9 +37,10 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFiler;
     private final AuthenticationProvider authProvider;
 
+    private final UserEligibilityFilter userEligibilityFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
         httpSecurity
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(applicationConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -54,7 +55,8 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authProvider)
-                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(userEligibilityFilter, JwtAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }
