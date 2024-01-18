@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+springBoot {
+    mainClass = 'pl.edu.pwr.administrativedivisionofpolandbackend.Application'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -45,4 +49,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    archiveBaseName = 'administrative-division-of-poland-backend'
+    archiveVersion = '0.0.1'
 }

@@ -102,4 +102,13 @@ public class ReportService {
                 report.getReportingDate()
         );
     }
+
+    public void deleteReport(int id) {
+        if (!reportRepository.existsById(id)) {
+            throw new EntityNotFoundException("Report not found");
+        }
+
+        reportRepository.deleteById(id);
+    }
+
 }

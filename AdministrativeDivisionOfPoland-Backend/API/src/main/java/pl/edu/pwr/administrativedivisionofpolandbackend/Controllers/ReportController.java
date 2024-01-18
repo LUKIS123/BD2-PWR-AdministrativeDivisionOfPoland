@@ -60,4 +60,12 @@ public class ReportController {
         return reportService.createReport(addReportRequest);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteReport(
+            @PathVariable(value = "id") int id
+    ) {
+        reportService.deleteReport(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
