@@ -19,14 +19,13 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Configuration.Applicatio
 @EnableMethodSecurity
 public class SecurityConfig {
     private final ApplicationConfig applicationConfig;
-
     private static final String[] WHITE_LIST_URLS = {
             "/v2/**",
             "/v3/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/auth/**",
-//            "/api/voivodeship/**",
+            "/api/voivodeship/**",
             "/api/county/**",
             "/api/commune/**",
             "/api/report/**",
@@ -34,10 +33,24 @@ public class SecurityConfig {
             "/api/history/**",
     };
 
+    private static final String[] BLACK_LIST_URLS = {
+            "/api/voivodeship/add/**",
+            "/api/voivodeship/update/**",
+            "/api/voivodeship/delete/**",
+            "/api/county/add/**",
+            "/api/county/update/**",
+            "/api/county/delete/**",
+            "/api/commune/add/**",
+            "/api/commune/update/**",
+            "/api/commune/delete/**",
+            "/api/report/delete/**",
+            "/api/address/add/**",
+            "/api/address/update/**",
+            "/api/address/delete/**",
+    };
+
     private final JwtAuthenticationFilter jwtAuthFiler;
     private final AuthenticationProvider authProvider;
-
-    private final UserEligibilityFilter userEligibilityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -45,18 +58,15 @@ public class SecurityConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(applicationConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(WHITE_LIST_URLS)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers(BLACK_LIST_URLS).authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authProvider)
-                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(userEligibilityFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFiler, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }

@@ -3,13 +3,14 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.County;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.CountyRegisteredOffice;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
-import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.AuthorizationException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CountyProjection;
@@ -17,11 +18,12 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRegis
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Validation.UserValidationService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.County.CountyRequest;
 import pl.edu.pwr.contract.Dtos.CountyAddressData;
-import pl.edu.pwr.contract.Dtos.CountyExtended;
 import pl.edu.pwr.contract.Dtos.CountyDto;
+import pl.edu.pwr.contract.Dtos.CountyExtended;
 
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class CountyService {
     private final VoivodeshipRepository voivodeshipRepository;
     private final CountyRegisteredOfficeRepository countyRegisteredOfficeRepository;
     private final RegisteredOfficeAddressesRepository addressesRepository;
+    private final UserValidationService userValidationService;
 
     public PageResult<CountyDto> getAll(int page, int size) {
         List<CountyProjection> all = countyRepository.getAll(size * (page - 1), size);
@@ -182,7 +185,12 @@ public class CountyService {
         return new PageResult<>(list, count, size, page);
     }
 
-    public Integer addCounty(CountyRequest countyRequest) {
+    @SneakyThrows
+    public Integer addCounty(CountyRequest countyRequest, String login) {
+        if (!userValidationService.validateUserVoivodeshipEligibility(login, countyRequest.voivodeshipId)) {
+            throw new AuthorizationException("User is not eligible to add county in this voivodeship");
+        }
+
         Voivodeship voivodeship = voivodeshipRepository
                 .findById(countyRequest.voivodeshipId)
                 .orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
@@ -197,7 +205,7 @@ public class CountyService {
         County save = countyRepository.save(county);
 
         if (countyRequest.registeredOfficeAddressesId == null) {
-            throw new InvalidRequestException("Registered office address id is required");
+            throw new AuthorizationException("Registered office address id is required");
         }
 
         RegisteredOfficeAddresses registeredOfficeAddress = addressesRepository
@@ -212,10 +220,17 @@ public class CountyService {
 
         countyRegisteredOfficeRepository.save(countyRegisteredOffice);
 
+        userValidationService.addUserEligibility(login, voivodeship.getId(), save.getId());
+
         return save.getId();
     }
 
-    public void updateCounty(int id, CountyRequest countyRequest) {
+    @SneakyThrows
+    public void updateCounty(int id, CountyRequest countyRequest, String login) {
+        if (!userValidationService.validateUserCountyEligibility(login, id)) {
+            throw new AuthorizationException("User is not eligible to update county with id: " + id);
+        }
+
         County county = countyRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("County not found"));
@@ -266,7 +281,12 @@ public class CountyService {
         countyRegisteredOfficeRepository.save(countyRegisteredOffice);
     }
 
-    public void deleteCounty(int id) {
+    @SneakyThrows
+    public void deleteCounty(int id, String login) {
+        if (!userValidationService.validateUserCountyEligibility(login, id)) {
+            throw new AuthorizationException("User is not eligible to delete county with id: " + id);
+        }
+
         if (!countyRepository.existsById(id)) {
             throw new EntityNotFoundException("County not found");
         }

@@ -1,18 +1,22 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Validation;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Eligibility;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.User;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.UserEligibility;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.AuthorizationException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.UserEligibilityDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.UserEligibilityModel;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.EligibilityRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.UserEligibilityRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.User.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -21,16 +25,7 @@ import java.util.Map;
 public class UserValidationService {
     private final UserEligibilityRepository userEligibilityRepository;
     private final UserRepository userRepository;
-
-    public boolean validateUser(String login) {
-        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
-        if (byUserLogin.isEmpty()) {
-            log.error("User with login: {} is not eligible to make this request", login);
-            return false;
-        }
-        return true;
-    }
-
+    private final EligibilityRepository eligibilityRepository;
 
     public boolean validateUserVoivodeshipEligibility(String login, int voivodeshipId) {
         List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
@@ -58,6 +53,64 @@ public class UserValidationService {
 
         return eligibilityList.stream()
                 .anyMatch(eligibilityModel -> eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null);
+    }
+
+    public boolean validateUserCountyEligibility(String login, int countyId, int voivodeshipId) {
+        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
+        if (byUserLogin.isEmpty()) {
+            log.error("User with login: {} is not eligible to make this request", login);
+            return false;
+        }
+
+        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
+                .map(this::getUserEligibilityModel).toList();
+
+        boolean matchByCounty = eligibilityList.stream()
+                .anyMatch(eligibilityModel -> eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null);
+        boolean matchByVoivodeship = eligibilityList.stream()
+                .anyMatch(eligibilityModel -> eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null);
+
+        return matchByCounty || matchByVoivodeship;
+    }
+
+    @SneakyThrows
+    public void addUserEligibility(String login, Integer voivodeshipId, Integer countyId) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new AuthorizationException("User not found"));
+
+        if (voivodeshipId != null) {
+            Eligibility e = Eligibility.builder()
+                    .voivodeshipId(voivodeshipId)
+                    .countyId(null)
+                    .build();
+            Eligibility save = eligibilityRepository.save(e);
+
+            UserEligibility userEligibility = UserEligibility.builder()
+                    .user(user)
+                    .eligibility(save)
+                    .validityStartingDate(LocalDateTime.now())
+                    .validityEndingDate(null)
+                    .build();
+
+            userEligibilityRepository.save(userEligibility);
+        }
+
+        if (countyId != null) {
+            Eligibility e = Eligibility.builder()
+                    .voivodeshipId(null)
+                    .countyId(countyId)
+                    .build();
+            Eligibility save = eligibilityRepository.save(e);
+
+            UserEligibility userEligibility = UserEligibility.builder()
+                    .user(user)
+                    .eligibility(save)
+                    .validityStartingDate(LocalDateTime.now())
+                    .validityEndingDate(null)
+                    .build();
+
+            userEligibilityRepository.save(userEligibility);
+        }
     }
 
     private UserEligibilityModel getUserEligibilityModel(UserEligibilityDataProjection projection) {

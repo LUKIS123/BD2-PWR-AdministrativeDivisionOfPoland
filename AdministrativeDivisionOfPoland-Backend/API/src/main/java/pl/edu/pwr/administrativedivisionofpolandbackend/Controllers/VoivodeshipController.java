@@ -10,6 +10,9 @@ import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
 import pl.edu.pwr.contract.Voivodeship.VoivodeshipRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.net.URI;
 
@@ -67,7 +70,7 @@ public class VoivodeshipController {
     public Integer addVoivodeship(
             @RequestBody VoivodeshipRequest addVoivodeshipRequest
     ) {
-        return voivodeshipService.addVoivodeship(addVoivodeshipRequest);
+        return voivodeshipService.addVoivodeship(addVoivodeshipRequest, getLogin());
     }
 
     @PutMapping("/update/{id}")
@@ -75,7 +78,7 @@ public class VoivodeshipController {
             @PathVariable(value = "id") int id,
             @RequestBody VoivodeshipRequest voivodeshipRequest
     ) {
-        voivodeshipService.updateVoivodeship(id, voivodeshipRequest);
+        voivodeshipService.updateVoivodeship(id, voivodeshipRequest, getLogin());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/voivodeship/{id}")
                 .buildAndExpand(id)
@@ -87,13 +90,26 @@ public class VoivodeshipController {
     public ResponseEntity<?> deleteVoivodeship(
             @PathVariable(value = "id") int id
     ) {
-        voivodeshipService.deleteVoivodeship(id);
+        voivodeshipService.deleteVoivodeship(id, getLogin());
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/teryt")
     public String getTERYTCode() {
         return voivodeshipService.getMaxTERYTCode();
+    }
+
+    private String getLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String username = null;
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        }
+        return username;
     }
 
 }

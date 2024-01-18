@@ -33,9 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userLogin;
 
-        if (request.getContextPath().contains("/swagger-ui/")) {
-            return;
-        }
+        // if (request.getContextPath().contains("/swagger-ui/")) {
+        //    return;
+        // }
 
         if (authHeader == null || !authHeader.startsWith(bearerName)) {
             filterChain.doFilter(request, response);

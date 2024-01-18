@@ -2,6 +2,9 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CountyService;
@@ -91,7 +94,7 @@ public class CountyController {
     public Integer addCounty(
             @RequestBody CountyRequest countyRequest
     ) {
-        return countyService.addCounty(countyRequest);
+        return countyService.addCounty(countyRequest, getLogin());
     }
 
     @PutMapping("/update/{id}")
@@ -99,7 +102,7 @@ public class CountyController {
             @PathVariable(value = "id") int id,
             @RequestBody CountyRequest countyRequest
     ) {
-        countyService.updateCounty(id, countyRequest);
+        countyService.updateCounty(id, countyRequest, getLogin());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/county/{id}")
                 .buildAndExpand(id)
@@ -111,7 +114,7 @@ public class CountyController {
     public ResponseEntity<?> deleteCounty(
             @PathVariable(value = "id") int id
     ) {
-        countyService.deleteCounty(id);
+        countyService.deleteCounty(id, getLogin());
         return ResponseEntity.noContent().build();
     }
 
@@ -119,6 +122,19 @@ public class CountyController {
     public String getTERYTCodeByVoivodeshipId(
             @RequestParam(value = "voivodeshipId") int voivodeshipId) {
         return countyService.getMaxTERYTCodeByVoivodeshipId(voivodeshipId);
+    }
+
+    private String getLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String username = null;
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        }
+        return username;
     }
 
 }
