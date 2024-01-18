@@ -48,4 +48,6 @@ public interface CountyRegisteredOfficeRepository extends JpaRepository<CountyRe
             where lower(siedziby_powiatow.miejscowosc_siedziby) like(?1)\s
             """)
     Integer getCountFromSearchCountyOffice(String searchPhrase);
+
+    List<CountyRegisteredOffice> findAllByRegisteredOfficeAddressesId(Integer registeredOfficeAddressesId);
 }

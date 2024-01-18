@@ -48,4 +48,6 @@ public interface VoivodeshipRegisteredOfficeRepository extends JpaRepository<Voi
             where lower(siedziby_wojewodztw.miejscowosc_siedziby) like(?1)\s
             """)
     Integer getCountFromSearchVoivodeshipOffice(String searchPhrase);
+
+    List<VoivodeshipRegisteredOffice> findAllByRegisteredOfficeAddressesId(Integer registeredOfficeAddressesId);
 }

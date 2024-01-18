@@ -47,4 +47,6 @@ public interface CommuneRegisteredOfficeRepository extends JpaRepository<Commune
             where lower(siedziby_gmin.miejscowosc_siedziby) like(?1)\s
             """)
     Integer getCountFromSearchCommuneOffice(String searchPhrase);
+
+    List<CommuneRegisteredOffice> findAllByRegisteredOfficeAddressesId(Integer registeredOfficeAddressesId);
 }
