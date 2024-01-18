@@ -232,4 +232,7 @@ public class CommuneService {
         communeRepository.deleteById(id);
     }
 
+    public String getMaxTERYTCodeByCountyId(int countyId) {
+        return communeRepository.getMaxTerytCodeByCountyId(countyId);
+    }
 }

@@ -272,4 +272,8 @@ public class CountyService {
         }
         countyRepository.deleteById(id);
     }
+
+    public String getMaxTERYTCodeByVoivodeshipId(int voivodeshipId) {
+        return countyRepository.getMaxTerytCodeByVoivodeshipId(voivodeshipId);
+    }
 }

@@ -143,4 +143,10 @@ public interface CommuneRepository extends JpaRepository<Commune, Integer> {
             fetch first ?3 row only\s
             """)
     List<CommuneAddressDataProjection> getCommuneAddressDataByCountyId(Integer countyId, Integer offsetRows, Integer fetchRows);
+
+    @Query(nativeQuery = true, value = """
+            select max(kod_teryt) from gmina\s
+            where id_pow = ?1\s
+            """)
+    String getMaxTerytCodeByCountyId(Integer countyId);
 }

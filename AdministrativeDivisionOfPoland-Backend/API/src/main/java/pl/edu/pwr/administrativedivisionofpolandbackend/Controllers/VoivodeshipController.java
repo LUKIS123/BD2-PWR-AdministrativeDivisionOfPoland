@@ -91,4 +91,9 @@ public class VoivodeshipController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/teryt")
+    public String getTERYTCode() {
+        return voivodeshipService.getMaxTERYTCode();
+    }
+
 }

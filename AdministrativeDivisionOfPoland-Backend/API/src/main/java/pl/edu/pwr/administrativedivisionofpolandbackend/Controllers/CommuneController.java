@@ -94,4 +94,10 @@ public class CommuneController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/teryt")
+    public String getTERYTCodeByCountyId(
+            @RequestParam(value = "countyId") int countyId) {
+        return communeService.getMaxTERYTCodeByCountyId(countyId);
+    }
+
 }

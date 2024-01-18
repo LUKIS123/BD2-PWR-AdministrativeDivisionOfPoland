@@ -193,5 +193,9 @@ public interface CountyRepository extends JpaRepository<County, Integer> {
             """)
     List<CountyExtendedProjection> getCountyExtendedByVoivodeshipId(Integer voivodeshipId, Integer offsetRows, Integer fetchRows);
 
-
+    @Query(nativeQuery = true, value = """
+            select max(kod_teryt) from powiat
+            where id_woj = ?1\s
+                """)
+    String getMaxTerytCodeByVoivodeshipId(Integer voivodeshipId);
 }

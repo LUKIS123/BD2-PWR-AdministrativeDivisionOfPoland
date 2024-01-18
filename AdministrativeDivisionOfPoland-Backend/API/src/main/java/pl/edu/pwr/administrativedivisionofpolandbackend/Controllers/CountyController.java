@@ -115,4 +115,10 @@ public class CountyController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/teryt")
+    public String getTERYTCodeByVoivodeshipId(
+            @RequestParam(value = "voivodeshipId") int voivodeshipId) {
+        return countyService.getMaxTERYTCodeByVoivodeshipId(voivodeshipId);
+    }
+
 }

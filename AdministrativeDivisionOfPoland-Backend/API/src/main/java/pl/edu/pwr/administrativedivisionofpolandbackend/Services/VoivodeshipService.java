@@ -336,4 +336,8 @@ public class VoivodeshipService {
         voivodeshipRepository.deleteById(id);
     }
 
+    public String getMaxTERYTCode() {
+        return voivodeshipRepository.getMaxTerytCode();
+    }
+
 }
