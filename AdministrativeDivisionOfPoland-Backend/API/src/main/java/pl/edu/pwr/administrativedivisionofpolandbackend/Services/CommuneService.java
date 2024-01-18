@@ -62,7 +62,7 @@ public class CommuneService {
                 countyName,
                 commune.getName(),
                 commune.getPopulation(),
-                commune.getAre(),
+                commune.getArea(),
                 communeType,
                 commune.getTERYTCode());
     }
@@ -141,7 +141,7 @@ public class CommuneService {
                 .county(county)
                 .name(communeRequest.name)
                 .population(communeRequest.population)
-                .are(communeRequest.are)
+                .area(communeRequest.area)
                 .communeType(communeType)
                 .TERYTCode(communeRequest.terytCode)
                 .build();
@@ -184,8 +184,8 @@ public class CommuneService {
         if (communeRequest.population != null) {
             commune.setPopulation(communeRequest.population);
         }
-        if (communeRequest.are != null) {
-            commune.setAre(communeRequest.are);
+        if (communeRequest.area != null) {
+            commune.setArea(communeRequest.area);
         }
         if (communeRequest.communeTypeId != null) {
             CommuneType communeType = communeTypeRepository

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.relational.core.sql.In;
 
 import java.time.LocalDateTime;
 
@@ -20,20 +21,20 @@ public class CommuneHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zm", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @Column(name = "id_gm")
-    private int communeId;
+    private Integer communeId;
     @Column(name = "id_pow")
-    private int countyId;
+    private Integer countyId;
     @Column(name = "nazwa_gminy")
     private String name;
     @Column(name = "adres_siedziby")
     private String legalAddress;
     @Column(name = "liczba_ludnosci")
-    private int population;
+    private Integer population;
     @Column(name = "powierzchnia")
-    private double are;
-    @ManyToOne(fetch = FetchType.LAZY)
+    private Double area;
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rodzaj_gminy")
     private CommuneType communeType;
     @Column(name = "data_poczatkowa")

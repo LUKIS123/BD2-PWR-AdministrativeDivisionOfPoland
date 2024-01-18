@@ -18,17 +18,17 @@ public class VoivodeshipHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zm", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @Column(name = "id_woj")
-    private int voivodeshipId;
+    private Integer voivodeshipId;
     @Column(name = "nazwa_wojewodztwa")
     private String name;
     @Column(name = "adres_siedziby")
     private String legalAddress;
     @Column(name = "liczba_ludnosci")
-    private int population;
+    private Integer population;
     @Column(name = "powierzchnia")
-    private double are;
+    private Double area;
     @Column(name = "wyroznik_tab_rej")
     private String licensePlateDifferentiator;
     @Column(name = "data_poczatkowa")

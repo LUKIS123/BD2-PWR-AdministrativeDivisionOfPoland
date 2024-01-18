@@ -25,4 +25,7 @@ module AdministrativeDivisionOfPoland.Backend.Contract.main {
 
     exports pl.edu.pwr.contract.Commune;
     opens pl.edu.pwr.contract.Commune;
+
+    exports pl.edu.pwr.contract.History;
+    opens pl.edu.pwr.contract.History;
 }

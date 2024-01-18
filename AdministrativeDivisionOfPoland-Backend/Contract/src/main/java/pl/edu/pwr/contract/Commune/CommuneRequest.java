@@ -14,7 +14,7 @@ public class CommuneRequest {
     public Integer countyId;
     public String name;
     public Integer population;
-    public Double are;
+    public Double area;
     public Integer communeTypeId;
     public String terytCode;
     // Office

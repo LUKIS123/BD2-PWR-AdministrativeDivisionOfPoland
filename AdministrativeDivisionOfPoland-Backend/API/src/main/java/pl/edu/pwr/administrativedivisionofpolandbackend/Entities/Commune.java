@@ -25,7 +25,7 @@ public class Commune {
     @Column(name = "liczba_ludnosci")
     private int population;
     @Column(name = "powierzchnia")
-    private double are;
+    private double area;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rodzaj_gminy")
     private CommuneType communeType;

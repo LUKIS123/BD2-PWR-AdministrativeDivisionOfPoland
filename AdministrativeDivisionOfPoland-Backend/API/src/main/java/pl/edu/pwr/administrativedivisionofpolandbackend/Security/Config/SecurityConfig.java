@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/api/county/**",
             "/api/commune/**",
             "/api/report/**",
-            "/api/address/**"
+            "/api/address/**",
+            "/api/history/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFiler;
