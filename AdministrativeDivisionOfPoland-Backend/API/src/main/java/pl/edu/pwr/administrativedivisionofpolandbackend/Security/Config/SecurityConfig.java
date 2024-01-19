@@ -19,19 +19,64 @@ import pl.edu.pwr.administrativedivisionofpolandbackend.Configuration.Applicatio
 @EnableMethodSecurity
 public class SecurityConfig {
     private final ApplicationConfig applicationConfig;
-
     private static final String[] WHITE_LIST_URLS = {
             "/v2/**",
             "/v3/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/auth/**",
-            "/api/voivodeship/**",
-            "/api/county/**",
-            "/api/commune/**",
-            "/api/report/**",
-            "/api/address/**",
-            "/api/history/**",
+            "/api/commune/{id}",
+            "/api/commune/byCounty",
+            "/api/commune/all",
+            "/api/commune/search",
+            "/api/commune/address/{id}",
+            "/api/commune/address/all",
+            "/api/commune/address/byCounty",
+            "/api/commune/teryt",
+            "/api/county/{id}",
+            "/api/county/byVoivodeship",
+            "/api/county/all",
+            "/api/county/search",
+            "api/county/extended/{id}",
+            "api/county/extended/byVoivodeship",
+            "api/county/extended/all",
+            "api/county/address/{id}",
+            "api/county/address/byVoivodeship",
+            "api/county/address/all",
+            "/api/county/teryt",
+            "/api/voivodeship/{id}",
+            "/api/voivodeship/all",
+            "/api/voivodeship/search",
+            "api/voivodeship/extended/{id}",
+            "api/voivodeship/extended/all",
+            "api/voivodeship/address/{id}",
+            "api/voivodeship/address/all",
+            "/api/voivodeship/teryt",
+            "api/history/**",
+            "api/address/{id}",
+            "api/address/all",
+            "/api/report/all",
+            "/api/report/{id}",
+            "/api/report/byVoivodeship",
+            "/api/report/byCounty",
+            "/api/report/byCommune",
+            "/api/report/add",
+    };
+
+    private static final String[] BLACK_LIST_URLS = {
+            "/api/voivodeship/add/**",
+            "/api/voivodeship/update/**",
+            "/api/voivodeship/delete/**",
+            "/api/county/add/**",
+            "/api/county/update/**",
+            "/api/county/delete/**",
+            "/api/commune/add/**",
+            "/api/commune/update/**",
+            "/api/commune/delete/**",
+            "/api/report/delete/**",
+            "/api/address/add/**",
+            "/api/address/update/**",
+            "/api/address/delete/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFiler;
@@ -39,15 +84,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
         httpSecurity
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(applicationConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(WHITE_LIST_URLS)
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers(WHITE_LIST_URLS).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer

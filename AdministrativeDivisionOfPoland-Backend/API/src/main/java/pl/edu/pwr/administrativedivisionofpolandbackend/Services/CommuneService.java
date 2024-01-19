@@ -3,13 +3,16 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.*;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.AuthorizationException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.CommuneProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.*;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Validation.UserValidationService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Commune.CommuneRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
@@ -27,6 +30,7 @@ public class CommuneService {
     private final CommuneTypeRepository communeTypeRepository;
     private final CountyRepository countyRepository;
     private final RegisteredOfficeAddressesRepository addressesRepository;
+    private final UserValidationService userValidationService;
 
     public PageResult<CommuneDto> getAll(int page, int size) {
         List<CommuneProjection> all = communeRepository.getAll(size * (page - 1), size);
@@ -128,13 +132,20 @@ public class CommuneService {
         return new PageResult<>(dtos, count, size, page);
     }
 
-    public Integer addCommune(CommuneRequest communeRequest) {
+    @SneakyThrows
+    public Integer addCommune(CommuneRequest communeRequest, String login) {
         County county = countyRepository
                 .findById(communeRequest.countyId)
                 .orElseThrow(() -> new EntityNotFoundException("County not found"));
 
+
+        // Validation
+        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId, county.getVoivodeship().getId())) {
+            throw new AuthorizationException("User is not eligible to add commune");
+        }
+
         CommuneType communeType = communeTypeRepository
-                .findById(communeRequest.countyId)
+                .findById(communeRequest.communeTypeId)
                 .orElseThrow(() -> new EntityNotFoundException("Commune Type not found"));
 
         Commune commune = Commune.builder()
@@ -166,7 +177,12 @@ public class CommuneService {
         return save.getId();
     }
 
-    public void updateCounty(int id, CommuneRequest communeRequest) {
+    @SneakyThrows
+    public void updateCounty(int id, CommuneRequest communeRequest, String login) {
+        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId)) {
+            throw new AuthorizationException("User is not eligible to update commune");
+        }
+
         Commune commune = communeRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Commune not found"));
@@ -225,7 +241,12 @@ public class CommuneService {
         communeRegisteredOfficeRepository.save(communeRegisteredOffice);
     }
 
-    public void deleteCommune(int id) {
+    @SneakyThrows
+    public void deleteCommune(int id, String login) {
+        if (!userValidationService.validateUserCountyEligibility(login, id)) {
+            throw new AuthorizationException("User is not eligible to delete commune");
+        }
+
         if (!communeRepository.existsById(id)) {
             throw new EntityNotFoundException("Commune not found");
         }

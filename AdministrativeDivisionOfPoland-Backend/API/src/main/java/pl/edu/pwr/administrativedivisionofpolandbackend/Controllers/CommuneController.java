@@ -2,6 +2,9 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Services.CommuneService;
@@ -70,7 +73,7 @@ public class CommuneController {
     public Integer addCommune(
             @RequestBody CommuneRequest communeRequest
     ) {
-        return communeService.addCommune(communeRequest);
+        return communeService.addCommune(communeRequest, getLogin());
     }
 
     @PutMapping("/update/{id}")
@@ -78,7 +81,7 @@ public class CommuneController {
             @PathVariable(value = "id") int id,
             @RequestBody CommuneRequest communeRequest
     ) {
-        communeService.updateCounty(id, communeRequest);
+        communeService.updateCounty(id, communeRequest, getLogin());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/commune/{id}")
                 .buildAndExpand(id)
@@ -90,7 +93,7 @@ public class CommuneController {
     public ResponseEntity<?> deleteCommune(
             @PathVariable(value = "id") int id
     ) {
-        communeService.deleteCommune(id);
+        communeService.deleteCommune(id, getLogin());
         return ResponseEntity.noContent().build();
     }
 
@@ -98,6 +101,19 @@ public class CommuneController {
     public String getTERYTCodeByCountyId(
             @RequestParam(value = "countyId") int countyId) {
         return communeService.getMaxTERYTCodeByCountyId(countyId);
+    }
+
+    private String getLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String username = null;
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        }
+        return username;
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.*;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Model.History.CommuneHistoryData;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.CountyRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.History.CommuneHistoryRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.History.CountyHistoryRepository;
@@ -31,11 +32,28 @@ public class HistoryService {
     private final VoivodeshipRepository voivodeshipRepository;
 
     public PageResult<CommuneHistoryDto> getAllCommuneHistory(int page, int size) {
-        List<CommuneHistory> communeHistory = communeHistoryRepository.getAllCommuneHistory(size * (page - 1), size);
+        List<CommuneHistoryData> allCommuneHistoryData = communeHistoryRepository.getAllCommuneHistoryData(size * (page - 1), size);
+        List<CommuneHistoryDto> list = allCommuneHistoryData.stream()
+                .map(x -> new CommuneHistoryDto(
+                        x.getId(),
+                        x.getCountyId(),
+                        x.getCountyName(),
+                        x.getCommuneId(),
+                        x.getCommuneName(),
+                        x.getAddress(),
+                        x.getPopulation(),
+                        x.getArea(),
+                        x.getCommuneType(),
+                        x.getStartDate(),
+                        x.getEndDate()
+                ))
+                .toList();
+
+
         Integer communeHistoryCount = communeHistoryRepository.getCommuneHistoryCount();
 
         return new PageResult<>(
-                communeHistory.stream().map(this::mapToCommuneHistoryDto).toList(),
+                list,
                 communeHistoryCount,
                 size,
                 page

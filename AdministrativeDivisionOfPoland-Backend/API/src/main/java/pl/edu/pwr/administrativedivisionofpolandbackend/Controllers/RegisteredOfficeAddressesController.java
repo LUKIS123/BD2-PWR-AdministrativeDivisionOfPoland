@@ -25,7 +25,7 @@ public class RegisteredOfficeAddressesController {
 
     @GetMapping("/all")
     public ResponseEntity<PageResult<OfficeAddressDto>> findAll(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(officeAddressesService.getAllAddresses(page, size));
     }

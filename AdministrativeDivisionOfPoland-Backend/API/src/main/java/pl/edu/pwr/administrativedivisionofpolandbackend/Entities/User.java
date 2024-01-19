@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 public class User implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_admin", nullable = false, unique = true, updatable = false)
     private int id;
     @Column(name = "login", nullable = false)
@@ -29,10 +29,10 @@ public class User implements UserDetails {
     @Column(name = "haslo", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<UserEligibility> userEligibility;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
     @Override
@@ -68,5 +68,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+               "id=" + id +
+               ", login='" + login + '\'' +
+               ", password='" + password + '\'' +
+               '}';
     }
 }

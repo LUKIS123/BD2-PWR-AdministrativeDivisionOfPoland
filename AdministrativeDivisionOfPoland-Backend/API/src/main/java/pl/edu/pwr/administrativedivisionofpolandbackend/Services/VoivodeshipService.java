@@ -3,17 +3,20 @@ package pl.edu.pwr.administrativedivisionofpolandbackend.Services;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.RegisteredOfficeAddresses;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.Voivodeship;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Entities.VoivodeshipRegisteredOffice;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.AuthorizationException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Exceptions.InvalidRequestException;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipAddressDataProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Model.VoivodeshipExtendedProjection;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.RegisteredOfficeAddressesRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRegisteredOfficeRepository;
 import pl.edu.pwr.administrativedivisionofpolandbackend.Repositories.VoivodeshipRepository;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Validation.UserValidationService;
 import pl.edu.pwr.contract.Common.PageResult;
 import pl.edu.pwr.contract.Dtos.VoivodeshipAddressData;
 import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
@@ -30,6 +33,7 @@ public class VoivodeshipService {
     private final VoivodeshipRepository voivodeshipRepository;
     private final VoivodeshipRegisteredOfficeRepository voivodeshipRegisteredOfficeRepository;
     private final RegisteredOfficeAddressesRepository registeredOfficeAddressesRepository;
+    private final UserValidationService userValidationService;
 
     public PageResult<VoivodeshipDto> getAll(int page, int size) {
         List<Voivodeship> all = voivodeshipRepository.getAll(size * (page - 1), size);
@@ -126,7 +130,7 @@ public class VoivodeshipService {
         return new PageResult<>(list, count, size, page);
     }
 
-    public Integer addVoivodeship(VoivodeshipRequest addVoivodeshipRequest) {
+    public Integer addVoivodeship(VoivodeshipRequest addVoivodeshipRequest, String login) {
         Voivodeship voivodeship = Voivodeship.builder()
                 .name(addVoivodeshipRequest.name)
                 .licensePlateDifferentiator(addVoivodeshipRequest.licensePlateDifferentiator)
@@ -169,10 +173,18 @@ public class VoivodeshipService {
 
             voivodeshipRegisteredOfficeRepository.save(second);
         }
+
+        userValidationService.addUserEligibility(login, saved.getId(), null);
+
         return saved.getId();
     }
 
-    public void updateVoivodeship(int id, VoivodeshipRequest voivodeshipRequest) {
+    @SneakyThrows
+    public void updateVoivodeship(int id, VoivodeshipRequest voivodeshipRequest, String login) {
+        if (!userValidationService.validateUserVoivodeshipEligibility(login, id)) {
+            throw new AuthorizationException("User not eligible to make this request");
+        }
+
         Voivodeship voivodeship = voivodeshipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
 
         if (voivodeshipRequest.name != null) {
@@ -329,7 +341,12 @@ public class VoivodeshipService {
         voivodeshipRegisteredOfficeRepository.save(seatOfVoivode);
     }
 
-    public void deleteVoivodeship(int id) {
+    @SneakyThrows
+    public void deleteVoivodeship(int id, String login) {
+        if (!userValidationService.validateUserVoivodeshipEligibility(login, id)) {
+            throw new AuthorizationException("User not eligible to make this request");
+        }
+
         if (!voivodeshipRepository.existsById(id)) {
             throw new EntityNotFoundException("Voivodeship with ID " + id + " not found");
         }

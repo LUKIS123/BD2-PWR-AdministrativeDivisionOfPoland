@@ -20,21 +20,21 @@ public class HistoryController {
 
     @GetMapping("/voivodeships")
     public ResponseEntity<PageResult<VoivodeshipHistoryDto>> getAllVoivodeshipHistory(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(historyService.getAllVoivodeshipHistory(page, size));
     }
 
     @GetMapping("/counties")
     public ResponseEntity<PageResult<CountyHistoryDto>> getAllCountyHistory(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(historyService.getAllCountyHistory(page, size));
     }
 
     @GetMapping("/communes")
     public ResponseEntity<PageResult<CommuneHistoryDto>> getAllCommuneHistory(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(historyService.getAllCommuneHistory(page, size));
     }
