@@ -38,7 +38,10 @@ public class UserValidationService {
                 .map(this::getUserEligibilityModel).toList();
 
         return eligibilityList.stream()
-                .anyMatch(eligibilityModel -> eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null);
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.voivodeshipId == null) return false;
+                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
+                });
     }
 
     public boolean validateUserCountyEligibility(String login, int countyId) {
@@ -52,7 +55,10 @@ public class UserValidationService {
                 .map(this::getUserEligibilityModel).toList();
 
         return eligibilityList.stream()
-                .anyMatch(eligibilityModel -> eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null);
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.countyId == null) return false;
+                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
+                });
     }
 
     public boolean validateUserCountyEligibility(String login, int countyId, int voivodeshipId) {
@@ -66,11 +72,18 @@ public class UserValidationService {
                 .map(this::getUserEligibilityModel).toList();
 
         boolean matchByCounty = eligibilityList.stream()
-                .anyMatch(eligibilityModel -> eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null);
-        boolean matchByVoivodeship = eligibilityList.stream()
-                .anyMatch(eligibilityModel -> eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null);
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.countyId == null) return false;
+                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
+                });
 
-        return matchByCounty || matchByVoivodeship;
+        if (matchByCounty) return true;
+
+        return eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.voivodeshipId == null) return false;
+                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
+                });
     }
 
     @SneakyThrows
@@ -87,7 +100,7 @@ public class UserValidationService {
 
             UserEligibility userEligibility = UserEligibility.builder()
                     .user(user)
-                    .eligibility(save)
+                    .id(save.getId())
                     .validityStartingDate(LocalDateTime.now())
                     .validityEndingDate(null)
                     .build();
@@ -104,7 +117,7 @@ public class UserValidationService {
 
             UserEligibility userEligibility = UserEligibility.builder()
                     .user(user)
-                    .eligibility(save)
+                    .id(save.getId())
                     .validityStartingDate(LocalDateTime.now())
                     .validityEndingDate(null)
                     .build();

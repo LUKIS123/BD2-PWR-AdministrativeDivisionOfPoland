@@ -1,5 +1,7 @@
 package pl.edu.pwr.administrativedivisionofpolandbackend.Middleware;
 
+import io.jsonwebtoken.ClaimJwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AuthorizationException.class})
     public ResponseEntity<Object> handleAuthException(AuthorizationException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler({ExpiredJwtException.class})
+    public ResponseEntity<Object> handleJTWException(ExpiredJwtException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler({ClaimJwtException.class})
+    public ResponseEntity<Object> handleJTWException(ClaimJwtException exception) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(exception.getMessage());

@@ -15,13 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 public class UserEligibility {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_upr", nullable = false, unique = true, insertable = false, updatable = false)
+    @Column(name = "id_upr", nullable = false, unique = true, updatable = false)
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_upr", insertable = false, updatable = false)
-    private Eligibility eligibility;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_admin")

@@ -145,7 +145,7 @@ public class CommuneService {
         }
 
         CommuneType communeType = communeTypeRepository
-                .findById(communeRequest.countyId)
+                .findById(communeRequest.communeTypeId)
                 .orElseThrow(() -> new EntityNotFoundException("Commune Type not found"));
 
         Commune commune = Commune.builder()
