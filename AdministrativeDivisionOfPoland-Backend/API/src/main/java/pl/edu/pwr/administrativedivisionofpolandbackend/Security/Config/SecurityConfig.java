@@ -63,6 +63,20 @@ public class SecurityConfig {
             "/api/report/add",
     };
 
+    private static final String[] TEST_WHITE_LIST_URLS = {
+            "/v2/**",
+            "/v3/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/api/auth/**",
+            "/api/voivodeship/**",
+            "/api/county/**",
+            "/api/commune/**",
+            "/api/report/**",
+            "/api/address/**",
+            "/api/history/**",
+    };
+
     private static final String[] BLACK_LIST_URLS = {
             "/api/voivodeship/add/**",
             "/api/voivodeship/update/**",
@@ -88,7 +102,7 @@ public class SecurityConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(applicationConfig.corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(WHITE_LIST_URLS).permitAll()
+                        .requestMatchers(TEST_WHITE_LIST_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
