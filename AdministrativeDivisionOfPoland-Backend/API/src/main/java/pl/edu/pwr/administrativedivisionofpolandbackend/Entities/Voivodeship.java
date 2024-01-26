@@ -16,7 +16,7 @@ public class Voivodeship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_woj", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @Column(name = "nazwa_wojewodztwa")
     private String name;
     @Column(name = "wyroznik_tab_rej")

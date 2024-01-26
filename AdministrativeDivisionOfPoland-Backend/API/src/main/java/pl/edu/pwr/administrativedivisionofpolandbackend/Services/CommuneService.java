@@ -18,6 +18,8 @@ import pl.edu.pwr.contract.Commune.CommuneRequest;
 import pl.edu.pwr.contract.Dtos.CommuneAddressData;
 import pl.edu.pwr.contract.Dtos.CommuneDto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -31,6 +33,7 @@ public class CommuneService {
     private final CountyRepository countyRepository;
     private final RegisteredOfficeAddressesRepository addressesRepository;
     private final UserValidationService userValidationService;
+
 
     public PageResult<CommuneDto> getAll(int page, int size) {
         List<CommuneProjection> all = communeRepository.getAll(size * (page - 1), size);
@@ -66,7 +69,7 @@ public class CommuneService {
                 countyName,
                 commune.getName(),
                 commune.getPopulation(),
-                commune.getArea(),
+                BigDecimal.valueOf(commune.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue(),
                 communeType,
                 commune.getTERYTCode());
     }
@@ -85,7 +88,7 @@ public class CommuneService {
                 commune.getCountyName(),
                 commune.getName(),
                 commune.getPopulation(),
-                commune.getArea(),
+                BigDecimal.valueOf(commune.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue(),
                 commune.getCommuneType(),
                 commune.getTERYTCode());
     }
