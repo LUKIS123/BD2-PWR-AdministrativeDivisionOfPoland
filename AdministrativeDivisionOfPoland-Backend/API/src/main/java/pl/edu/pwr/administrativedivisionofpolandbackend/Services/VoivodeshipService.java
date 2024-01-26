@@ -187,20 +187,20 @@ public class VoivodeshipService {
 
         Voivodeship voivodeship = voivodeshipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Voivodeship not found"));
 
-        if (voivodeshipRequest.name != null) {
+        if (voivodeshipRequest.name != null && !voivodeshipRequest.name.isBlank()) {
             voivodeship.setName(voivodeshipRequest.name);
         }
-        if (voivodeshipRequest.licensePlateDifferentiator != null) {
+        if (voivodeshipRequest.licensePlateDifferentiator != null && !voivodeshipRequest.licensePlateDifferentiator.isBlank()) {
             voivodeship.setLicensePlateDifferentiator(voivodeshipRequest.licensePlateDifferentiator);
         }
-        if (voivodeshipRequest.terytCode != null) {
+        if (voivodeshipRequest.terytCode != null && !voivodeshipRequest.terytCode.isBlank()) {
             voivodeship.setTERYTCode(voivodeshipRequest.terytCode);
         }
 
         voivodeshipRepository.save(voivodeship);
 
         if (voivodeshipRequest.registeredOfficeAddressesIdFirst == null &&
-            voivodeshipRequest.localityFirst == null &&
+            (voivodeshipRequest.localityFirst == null || voivodeshipRequest.localityFirst.isBlank()) &&
             voivodeshipRequest.isSeatOfCouncilFirst == null &&
             voivodeshipRequest.isSeatOfVoivodeFirst == null) {
             return;
