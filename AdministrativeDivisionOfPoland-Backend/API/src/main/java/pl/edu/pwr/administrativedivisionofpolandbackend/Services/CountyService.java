@@ -85,12 +85,10 @@ public class CountyService {
     }
 
     private CountyDto mapToCountyDto(CountyProjection county) {
-        var voivodeshipId = county.getVoivodeshipId() == null ? null : county.getVoivodeshipId();
-        var voivodeshipName = county.getVoivodeshipName() == null ? null : county.getVoivodeshipName();
         return new CountyDto(
                 county.getId(),
-                voivodeshipId,
-                voivodeshipName,
+                county.getVoivodeshipId(),
+                county.getVoivodeshipName(),
                 county.getName(),
                 county.getCityWithCountyRights(),
                 county.getLicensePlateDifferentiator(),
@@ -241,7 +239,7 @@ public class CountyService {
 
             county.setVoivodeship(voivodeship);
         }
-        if (countyRequest.name != null) {
+        if (countyRequest.name != null && !countyRequest.name.isBlank()) {
             county.setName(countyRequest.name);
         }
         if (countyRequest.isCityWithCountyRights != null) {
@@ -250,7 +248,7 @@ public class CountyService {
         if (countyRequest.licensePlateDifferentiator != null) {
             county.setLicensePlateDifferentiator(countyRequest.licensePlateDifferentiator);
         }
-        if (countyRequest.terytCode != null) {
+        if (countyRequest.terytCode != null && !countyRequest.terytCode.isBlank()) {
             county.setTERYTCode(countyRequest.terytCode);
         }
         countyRepository.save(county);
@@ -266,7 +264,7 @@ public class CountyService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("County registered office not found"));
 
-        if (countyRequest.locality != null) {
+        if (countyRequest.locality != null && !countyRequest.locality.isBlank()) {
             countyRegisteredOffice.setLocality(countyRequest.locality);
         }
 

@@ -197,7 +197,7 @@ public class CommuneService {
 
             commune.setCounty(county);
         }
-        if (communeRequest.name != null) {
+        if (communeRequest.name != null && !communeRequest.name.isBlank()) {
             commune.setName(communeRequest.name);
         }
         if (communeRequest.population != null) {
@@ -213,7 +213,7 @@ public class CommuneService {
 
             commune.setCommuneType(communeType);
         }
-        if (communeRequest.terytCode != null) {
+        if (communeRequest.terytCode != null && !communeRequest.terytCode.isBlank()) {
             commune.setTERYTCode(communeRequest.terytCode);
         }
 
@@ -229,7 +229,7 @@ public class CommuneService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Commune registered office not found"));
 
-        if (communeRequest.locality != null) {
+        if (communeRequest.locality != null && !communeRequest.locality.isBlank()) {
             communeRegisteredOffice.setLocality(communeRequest.locality);
         }
 

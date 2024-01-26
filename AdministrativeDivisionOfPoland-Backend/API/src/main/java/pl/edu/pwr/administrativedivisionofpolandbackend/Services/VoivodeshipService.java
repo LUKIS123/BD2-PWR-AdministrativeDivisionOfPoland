@@ -225,7 +225,7 @@ public class VoivodeshipService {
                     .orElseThrow(() -> new EntityNotFoundException("Address with id: " + request.registeredOfficeAddressesIdFirst + " not found"));
             seat.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
         }
-        if (request.localityFirst != null) {
+        if (request.localityFirst != null && !request.localityFirst.isBlank()) {
             seat.setLocality(request.localityFirst);
         }
         if (request.isSeatOfCouncilFirst != null) {
@@ -271,7 +271,7 @@ public class VoivodeshipService {
             seatOfCouncil.setIsSeatOfCouncil(true);
             seatOfCouncil.setIsSeatOfVoivode(true);
 
-            if (request.localityFirst != null) {
+            if (request.localityFirst != null && !request.localityFirst.isBlank()) {
                 seatOfCouncil.setLocality(request.localityFirst);
             }
             if (request.registeredOfficeAddressesIdFirst != null) {
@@ -295,7 +295,7 @@ public class VoivodeshipService {
 
                 seatOfCouncil.setRegisteredOfficeAddresses(registeredOfficeAddressFirst);
 
-                if (request.localityFirst != null) {
+                if (request.localityFirst != null && !request.localityFirst.isBlank()) {
                     seatOfCouncil.setLocality(request.localityFirst);
                 }
 
