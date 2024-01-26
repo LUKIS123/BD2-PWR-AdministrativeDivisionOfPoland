@@ -229,10 +229,10 @@ public class VoivodeshipService {
             seat.setLocality(request.localityFirst);
         }
         if (request.isSeatOfCouncilFirst != null) {
-            seat.setSeatOfCouncil(request.isSeatOfCouncilFirst);
+            seat.setIsSeatOfCouncil(request.isSeatOfCouncilFirst);
         }
         if (request.isSeatOfVoivodeFirst != null) {
-            seat.setSeatOfVoivode(request.isSeatOfVoivodeFirst);
+            seat.setIsSeatOfVoivode(request.isSeatOfVoivodeFirst);
         }
 
         if (request.registeredOfficeAddressesIdSecond != null) {
@@ -258,18 +258,18 @@ public class VoivodeshipService {
 
     private void updateVoivodeshipBothSeats(VoivodeshipRequest request, List<VoivodeshipRegisteredOffice> voivodeshipOfficeByVoivodeshipId) {
         VoivodeshipRegisteredOffice seatOfCouncil = voivodeshipOfficeByVoivodeshipId.stream()
-                .filter(VoivodeshipRegisteredOffice::isSeatOfCouncil)
+                .filter(VoivodeshipRegisteredOffice::getIsSeatOfCouncil)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Seat of council not found"));
 
         VoivodeshipRegisteredOffice seatOfVoivode = voivodeshipOfficeByVoivodeshipId.stream()
-                .filter(VoivodeshipRegisteredOffice::isSeatOfVoivode)
+                .filter(VoivodeshipRegisteredOffice::getIsSeatOfVoivode)
                 .findFirst().orElseThrow(() -> new EntityNotFoundException("Seat of voivode not found"));
 
         // Z 2 siedzib zmiana na 1 wspolna
         if (request.isSeatOfCouncilFirst != null && request.isSeatOfCouncilFirst && request.isSeatOfVoivodeFirst != null && request.isSeatOfVoivodeFirst) {
 
-            seatOfCouncil.setSeatOfCouncil(true);
-            seatOfCouncil.setSeatOfVoivode(true);
+            seatOfCouncil.setIsSeatOfCouncil(true);
+            seatOfCouncil.setIsSeatOfVoivode(true);
 
             if (request.localityFirst != null) {
                 seatOfCouncil.setLocality(request.localityFirst);

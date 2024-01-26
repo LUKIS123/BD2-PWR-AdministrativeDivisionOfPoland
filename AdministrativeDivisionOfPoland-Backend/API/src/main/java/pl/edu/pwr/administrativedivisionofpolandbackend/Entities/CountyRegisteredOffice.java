@@ -16,7 +16,7 @@ public class CountyRegisteredOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_siedz", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pow")
     private County county;

@@ -16,16 +16,16 @@ public class VoivodeshipRegisteredOffice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_siedz", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_woj")
     private Voivodeship voivodeship;
     @Column(name = "miejscowosc_siedziby")
     private String locality;
     @Column(name = "siedziba_wojewody")
-    private boolean isSeatOfVoivode;
+    private Boolean isSeatOfVoivode;
     @Column(name = "siedziba_sejmiku")
-    private boolean isSeatOfCouncil;
+    private Boolean isSeatOfCouncil;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_adresu_siedziby")
     private RegisteredOfficeAddresses registeredOfficeAddresses;

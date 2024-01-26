@@ -18,7 +18,7 @@ public class CommuneType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rodzaju_gminy", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @Column(name = "nazwa_rodzaju")
     private String typeName;
 }

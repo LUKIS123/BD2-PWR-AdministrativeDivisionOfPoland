@@ -20,7 +20,7 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_zgl", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_woj")
     private Voivodeship voivodeship;

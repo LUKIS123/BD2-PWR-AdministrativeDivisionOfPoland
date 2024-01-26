@@ -72,7 +72,7 @@ public class CountyService {
                 voivodeshipId,
                 voivodeshipName,
                 county.getName(),
-                county.isCityWithCountyRights(),
+                county.getIsCityWithCountyRights(),
                 county.getLicensePlateDifferentiator(),
                 county.getTERYTCode());
     }
@@ -245,7 +245,7 @@ public class CountyService {
             county.setName(countyRequest.name);
         }
         if (countyRequest.isCityWithCountyRights != null) {
-            county.setCityWithCountyRights(countyRequest.isCityWithCountyRights);
+            county.setIsCityWithCountyRights(countyRequest.isCityWithCountyRights);
         }
         if (countyRequest.licensePlateDifferentiator != null) {
             county.setLicensePlateDifferentiator(countyRequest.licensePlateDifferentiator);

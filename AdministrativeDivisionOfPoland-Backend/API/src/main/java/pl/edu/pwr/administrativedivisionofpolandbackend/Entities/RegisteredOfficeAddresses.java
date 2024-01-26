@@ -16,7 +16,7 @@ public class RegisteredOfficeAddresses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_adresu_siedziby", nullable = false, unique = true, updatable = false)
-    private int id;
+    private Integer id;
     @Column(name = "kod_pocztowy")
     private String postalCode;
     @Column(name = "miejscowosc")
