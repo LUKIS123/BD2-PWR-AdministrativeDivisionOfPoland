@@ -23,6 +23,8 @@ import pl.edu.pwr.contract.Dtos.VoivodeshipDto;
 import pl.edu.pwr.contract.Dtos.VoivodeshipExtended;
 import pl.edu.pwr.contract.Voivodeship.VoivodeshipRequest;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -111,7 +113,7 @@ public class VoivodeshipService {
                 voivodeship.getLicensePlateDifferentiator(),
                 voivodeship.getTerytCode(),
                 voivodeship.getPopulation(),
-                voivodeship.getArea()
+                BigDecimal.valueOf(voivodeship.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
         );
     }
 
@@ -124,7 +126,7 @@ public class VoivodeshipService {
                         x.getLicensePlateDifferentiator(),
                         x.getTerytCode(),
                         x.getPopulation(),
-                        x.getArea()
+                        BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
                 )).toList();
         Integer count = voivodeshipRepository.getCount();
         return new PageResult<>(list, count, size, page);

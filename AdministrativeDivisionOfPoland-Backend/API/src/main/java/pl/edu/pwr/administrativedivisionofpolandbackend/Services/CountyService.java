@@ -25,6 +25,8 @@ import pl.edu.pwr.contract.Dtos.CountyAddressData;
 import pl.edu.pwr.contract.Dtos.CountyDto;
 import pl.edu.pwr.contract.Dtos.CountyExtended;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -156,7 +158,7 @@ public class CountyService {
                 county.getLicensePlateDifferentiator(),
                 county.getTerytCode(),
                 county.getPopulation(),
-                county.getArea()
+                BigDecimal.valueOf(county.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
         );
     }
 
@@ -177,7 +179,7 @@ public class CountyService {
                         x.getLicensePlateDifferentiator(),
                         x.getTerytCode(),
                         x.getPopulation(),
-                        x.getArea()
+                        BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
                 ))
                 .toList();
         return new PageResult<>(list, count, size, page);
