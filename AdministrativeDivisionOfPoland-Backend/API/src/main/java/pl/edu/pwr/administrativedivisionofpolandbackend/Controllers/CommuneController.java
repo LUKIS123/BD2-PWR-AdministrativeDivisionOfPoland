@@ -34,6 +34,14 @@ public class CommuneController {
         return ResponseEntity.ok().body(communeService.getByCountyId(countyId, page, size));
     }
 
+    @GetMapping("/byVoivodeship")
+    public ResponseEntity<PageResult<CommuneDto>> getByVoivodeshipId(
+            @RequestParam(value = "voivodeshipId") int voivodeshipId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "15") int size) {
+        return ResponseEntity.ok().body(communeService.getByVoivodeshipId(voivodeshipId, page, size));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<PageResult<CommuneDto>> getAll(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -67,6 +75,14 @@ public class CommuneController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "15") int size) {
         return ResponseEntity.ok().body(communeService.getWithAddressDataByCountyId(countyId, page, size));
+    }
+
+    @GetMapping("/address/byVoivodeship")
+    public ResponseEntity<PageResult<CommuneAddressData>> getWithAddressDataByVoivodeshipId(
+            @RequestParam(value = "voivodeshipId") int voivodeshipId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "15") int size) {
+        return ResponseEntity.ok().body(communeService.getWithAddressDataByVoivodeshipId(voivodeshipId, page, size));
     }
 
     @PostMapping("/add")

@@ -259,4 +259,17 @@ public class CommuneService {
     public String getMaxTERYTCodeByCountyId(int countyId) {
         return communeRepository.getMaxTerytCodeByCountyId(countyId);
     }
+
+    public PageResult<CommuneAddressData> getWithAddressDataByVoivodeshipId(int voivodeshipId, int page, int size) {
+        List<CommuneAddressDataProjection> allCommuneAddressDataByVoivodeshipId = communeRepository.getAllCommuneAddressDataByVoivodeshipId(voivodeshipId, size * (page - 1), size);
+        Integer count = communeRepository.getCommuneAddressDataCountByVoivodeshipId(voivodeshipId);
+        return getCommuneAddressDataFromProjection(page, size, allCommuneAddressDataByVoivodeshipId, count);
+    }
+
+    public PageResult<CommuneDto> getByVoivodeshipId(int voivodeshipId, int page, int size) {
+        List<CommuneProjection> allByVoivodeshipId = communeRepository.getAllByVoivodeshipId(voivodeshipId, size * (page - 1), size);
+        Integer count = communeRepository.getCountByVoivodeshipId(voivodeshipId);
+        return getCommuneDtoPageResultFromProjection(page, size, allByVoivodeshipId, count);
+    }
+
 }
