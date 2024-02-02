@@ -137,13 +137,11 @@ public class CommuneService {
 
     @SneakyThrows
     public Integer addCommune(CommuneRequest communeRequest, String login) {
-        County county = countyRepository
+        County superiorUnit = countyRepository
                 .findById(communeRequest.countyId)
                 .orElseThrow(() -> new EntityNotFoundException("County not found"));
-
-
         // Validation
-        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId, county.getVoivodeship().getId())) {
+        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId, superiorUnit.getVoivodeship().getId())) {
             throw new AuthorizationException("User is not eligible to add commune");
         }
 
@@ -152,7 +150,7 @@ public class CommuneService {
                 .orElseThrow(() -> new EntityNotFoundException("Commune Type not found"));
 
         Commune commune = Commune.builder()
-                .county(county)
+                .county(superiorUnit)
                 .name(communeRequest.name)
                 .population(communeRequest.population)
                 .area(communeRequest.area)
@@ -181,8 +179,12 @@ public class CommuneService {
     }
 
     @SneakyThrows
-    public void updateCounty(int id, CommuneRequest communeRequest, String login) {
-        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId)) {
+    public void updateCommune(int id, CommuneRequest communeRequest, String login) {
+        County superiorUnit = countyRepository
+                .findById(communeRequest.countyId)
+                .orElseThrow(() -> new EntityNotFoundException("County not found"));
+        // Validation
+        if (!userValidationService.validateUserCountyEligibility(login, communeRequest.countyId, superiorUnit.getVoivodeship().getId())) {
             throw new AuthorizationException("User is not eligible to update commune");
         }
 
@@ -246,13 +248,18 @@ public class CommuneService {
 
     @SneakyThrows
     public void deleteCommune(int id, String login) {
-        if (!userValidationService.validateUserCountyEligibility(login, id)) {
+        // Validation
+        Commune commune = communeRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Commune not found"));
+        County superiorUnit = commune.getCounty();
+        if (superiorUnit == null) {
+            throw new EntityNotFoundException("County not found");
+        }
+        if (!userValidationService.validateUserCountyEligibility(login, superiorUnit.getId(), superiorUnit.getVoivodeship().getId())) {
             throw new AuthorizationException("User is not eligible to delete commune");
         }
 
-        if (!communeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Commune not found");
-        }
         communeRepository.deleteById(id);
     }
 

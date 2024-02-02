@@ -28,118 +28,123 @@ public class UserValidationService {
     private final EligibilityRepository eligibilityRepository;
 
     public boolean validateUserVoivodeshipEligibility(String login, int voivodeshipId) {
-//        if (login == null || login.isBlank()) return false;
-//
-//        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
-//        if (byUserLogin.isEmpty()) {
-//            log.error("User with login: {} is not eligible to make this request", login);
-//            return false;
-//        }
-//
-//        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
-//                .map(this::getUserEligibilityModel).toList();
-//
-//        return eligibilityList.stream()
-//                .anyMatch(eligibilityModel -> {
-//                    if (eligibilityModel.voivodeshipId == null) return false;
-//                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
-//                });
+        if (login == null || login.isBlank()) return false;
 
-        return true;
-    }
+        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
+        if (byUserLogin.isEmpty()) {
+            log.error("User with login: {} is not eligible to make this request", login);
+            return false;
+        }
 
-    public boolean validateUserCountyEligibility(String login, int countyId) {
-//        if (login == null || login.isBlank()) return false;
-//
-//        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
-//        if (byUserLogin.isEmpty()) {
-//            log.error("User with login: {} is not eligible to make this request", login);
-//            return false;
-//        }
-//
-//        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
-//                .map(this::getUserEligibilityModel).toList();
-//
-//        return eligibilityList.stream()
-//                .anyMatch(eligibilityModel -> {
-//                    if (eligibilityModel.countyId == null) return false;
-//                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
-//                });
+        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
+                .map(this::getUserEligibilityModel).toList();
 
-        return true;
+        return eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.voivodeshipId == null) return false;
+                    if (eligibilityModel.voivodeshipId == -1) return true;
+                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
+                });
     }
 
     public boolean validateUserCountyEligibility(String login, int countyId, int voivodeshipId) {
-//        if (login == null || login.isBlank()) return false;
-//
-//        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
-//        if (byUserLogin.isEmpty()) {
-//            log.error("User with login: {} is not eligible to make this request", login);
-//            return false;
-//        }
-//
-//        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
-//                .map(this::getUserEligibilityModel).toList();
-//
-//        boolean matchByCounty = eligibilityList.stream()
-//                .anyMatch(eligibilityModel -> {
-//                    if (eligibilityModel.countyId == null) return false;
-//                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
-//                });
-//
-//        if (matchByCounty) return true;
-//
-//        return eligibilityList.stream()
-//                .anyMatch(eligibilityModel -> {
-//                    if (eligibilityModel.voivodeshipId == null) return false;
-//                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
-//                });
+        if (login == null || login.isBlank()) return false;
 
-        return true;
+        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
+        if (byUserLogin.isEmpty()) {
+            log.error("User with login: {} is not eligible to make this request", login);
+            return false;
+        }
+
+        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
+                .map(this::getUserEligibilityModel).toList();
+
+        boolean matchByCounty = eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.countyId == null) return false;
+                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
+                });
+
+        if (matchByCounty) return true;
+
+        return eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.voivodeshipId == null) return false;
+                    if (eligibilityModel.voivodeshipId == -1) return true;
+                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
+                });
+    }
+
+    public boolean validateUserCommuneEligibility(String login, int voivodeshipId, int countyId) {
+        if (login == null || login.isBlank()) return false;
+
+        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
+        if (byUserLogin.isEmpty()) {
+            log.error("User with login: {} is not eligible to make this request", login);
+            return false;
+        }
+
+        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
+                .map(this::getUserEligibilityModel).toList();
+
+        boolean matchByCounty = eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.countyId == null) return false;
+                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
+                });
+
+        if (matchByCounty) return true;
+
+        return eligibilityList.stream()
+                .anyMatch(eligibilityModel -> {
+                    if (eligibilityModel.voivodeshipId == null) return false;
+                    if (eligibilityModel.voivodeshipId == -1) return true;
+                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
+                });
     }
 
     @SneakyThrows
     public void addUserEligibility(String login, Integer voivodeshipId, Integer countyId) {
-//        if (login == null || login.isBlank()) {
-//            throw new AuthorizationException("Could not add eligibility");
-//        }
-//
-//        User user = userRepository.findByLogin(login)
-//                .orElseThrow(() -> new AuthorizationException("User not found"));
-//
-//        if (voivodeshipId != null) {
-//            Eligibility e = Eligibility.builder()
-//                    .voivodeshipId(voivodeshipId)
-//                    .countyId(null)
-//                    .build();
-//            Eligibility save = eligibilityRepository.save(e);
-//
-//            UserEligibility userEligibility = UserEligibility.builder()
-//                    .user(user)
-//                    .id(save.getId())
-//                    .validityStartingDate(LocalDateTime.now())
-//                    .validityEndingDate(null)
-//                    .build();
-//
-//            userEligibilityRepository.save(userEligibility);
-//        }
-//
-//        if (countyId != null) {
-//            Eligibility e = Eligibility.builder()
-//                    .voivodeshipId(null)
-//                    .countyId(countyId)
-//                    .build();
-//            Eligibility save = eligibilityRepository.save(e);
-//
-//            UserEligibility userEligibility = UserEligibility.builder()
-//                    .user(user)
-//                    .id(save.getId())
-//                    .validityStartingDate(LocalDateTime.now())
-//                    .validityEndingDate(null)
-//                    .build();
-//
-//            userEligibilityRepository.save(userEligibility);
-//        }
+        if (login == null || login.isBlank()) {
+            throw new AuthorizationException("Could not add eligibility");
+        }
+
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new AuthorizationException("User not found"));
+
+        if (voivodeshipId != null) {
+            Eligibility e = Eligibility.builder()
+                    .voivodeshipId(voivodeshipId)
+                    .countyId(null)
+                    .build();
+            Eligibility save = eligibilityRepository.save(e);
+
+            UserEligibility userEligibility = UserEligibility.builder()
+                    .user(user)
+                    .id(save.getId())
+                    .validityStartingDate(LocalDateTime.now())
+                    .validityEndingDate(null)
+                    .build();
+
+            userEligibilityRepository.save(userEligibility);
+        }
+
+        if (countyId != null) {
+            Eligibility e = Eligibility.builder()
+                    .voivodeshipId(null)
+                    .countyId(countyId)
+                    .build();
+            Eligibility save = eligibilityRepository.save(e);
+
+            UserEligibility userEligibility = UserEligibility.builder()
+                    .user(user)
+                    .id(save.getId())
+                    .validityStartingDate(LocalDateTime.now())
+                    .validityEndingDate(null)
+                    .build();
+
+            userEligibilityRepository.save(userEligibility);
+        }
     }
 
     private UserEligibilityModel getUserEligibilityModel(UserEligibilityDataProjection projection) {

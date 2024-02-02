@@ -227,13 +227,13 @@ public class CountyService {
 
     @SneakyThrows
     public void updateCounty(int id, CountyRequest countyRequest, String login) {
-        if (!userValidationService.validateUserCountyEligibility(login, id)) {
-            throw new AuthorizationException("User is not eligible to update county with id: " + id);
-        }
-
         County county = countyRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("County not found"));
+        // Validation
+        if (!userValidationService.validateUserCountyEligibility(login, id, county.getVoivodeship().getId())) {
+            throw new AuthorizationException("User is not eligible to update county with id: " + id);
+        }
 
         if (countyRequest.voivodeshipId != null) {
             Voivodeship voivodeship = voivodeshipRepository.findById(countyRequest.voivodeshipId)
@@ -283,13 +283,15 @@ public class CountyService {
 
     @SneakyThrows
     public void deleteCounty(int id, String login) {
-        if (!userValidationService.validateUserCountyEligibility(login, id)) {
+        County county = countyRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("County not found"));
+
+        // Validation
+        if (!userValidationService.validateUserCountyEligibility(login, id, county.getVoivodeship().getId())) {
             throw new AuthorizationException("User is not eligible to delete county with id: " + id);
         }
 
-        if (!countyRepository.existsById(id)) {
-            throw new EntityNotFoundException("County not found");
-        }
         countyRepository.deleteById(id);
     }
 

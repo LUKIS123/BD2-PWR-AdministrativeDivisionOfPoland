@@ -97,7 +97,7 @@ public class CommuneController {
             @PathVariable(value = "id") int id,
             @RequestBody CommuneRequest communeRequest
     ) {
-        communeService.updateCounty(id, communeRequest, getLogin());
+        communeService.updateCommune(id, communeRequest, getLogin());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/commune/{id}")
                 .buildAndExpand(id)
