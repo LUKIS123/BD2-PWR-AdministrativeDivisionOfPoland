@@ -113,7 +113,7 @@ public class VoivodeshipService {
                 voivodeship.getLicensePlateDifferentiator(),
                 voivodeship.getTerytCode(),
                 voivodeship.getPopulation(),
-                BigDecimal.valueOf(voivodeship.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                voivodeship.getArea() == null ? null : BigDecimal.valueOf(voivodeship.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
         );
     }
 
@@ -126,7 +126,7 @@ public class VoivodeshipService {
                         x.getLicensePlateDifferentiator(),
                         x.getTerytCode(),
                         x.getPopulation(),
-                        BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                        x.getArea() == null ? null : BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
                 )).toList();
         Integer count = voivodeshipRepository.getCount();
         return new PageResult<>(list, count, size, page);

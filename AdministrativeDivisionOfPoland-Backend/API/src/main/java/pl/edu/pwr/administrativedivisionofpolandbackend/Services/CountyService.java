@@ -158,7 +158,7 @@ public class CountyService {
                 county.getLicensePlateDifferentiator(),
                 county.getTerytCode(),
                 county.getPopulation(),
-                BigDecimal.valueOf(county.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                county.getArea() == null ? null : BigDecimal.valueOf(county.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
         );
     }
 
@@ -179,7 +179,7 @@ public class CountyService {
                         x.getLicensePlateDifferentiator(),
                         x.getTerytCode(),
                         x.getPopulation(),
-                        BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
+                        x.getArea() == null ? null : BigDecimal.valueOf(x.getArea()).setScale(2, RoundingMode.HALF_UP).doubleValue()
                 ))
                 .toList();
         return new PageResult<>(list, count, size, page);
