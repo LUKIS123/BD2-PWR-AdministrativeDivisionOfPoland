@@ -9,10 +9,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-// TODO: poprawic lazy loading tak samo jak w innych repach
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Integer> {
     Optional<Report> findById(int id);
+
+    @Query(nativeQuery = true, value = """
+            select * from zgloszenia\s
+            order by temat\s
+            offset ?1 rows\s
+            fetch first ?2 row only\s
+            """)
+    List<Report> findAll(Integer offsetRows, Integer fetchRows);
 
     @Query(nativeQuery = true, value = """
             select * from zgloszenia\s
@@ -64,5 +71,5 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
             values(?1, ?2, ?3, ?4, ?5, ?6)\s
             RETURNING id_zgl\s
             """)
-    Integer insertIntoReportTable(Integer voivodeshipId, Integer countyId, Integer communeId, String topic, String content, LocalDateTime date);
+    Integer addReport(Integer voivodeshipId, Integer countyId, Integer communeId, String topic, String content, LocalDateTime date);
 }

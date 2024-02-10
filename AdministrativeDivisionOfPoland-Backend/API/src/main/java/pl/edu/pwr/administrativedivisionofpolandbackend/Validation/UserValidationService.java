@@ -70,35 +70,6 @@ public class UserValidationService {
         return eligibilityList.stream()
                 .anyMatch(eligibilityModel -> {
                     if (eligibilityModel.voivodeshipId == null) return false;
-                    if (eligibilityModel.voivodeshipId == -1) return true;
-                    return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
-                });
-    }
-
-    public boolean validateUserCommuneEligibility(String login, int voivodeshipId, int countyId) {
-        if (login == null || login.isBlank()) return false;
-
-        List<UserEligibilityDataProjection> byUserLogin = userEligibilityRepository.getByUserLogin(login);
-        if (byUserLogin.isEmpty()) {
-            log.error("User with login: {} is not eligible to make this request", login);
-            return false;
-        }
-
-        List<UserEligibilityModel> eligibilityList = byUserLogin.stream()
-                .map(this::getUserEligibilityModel).toList();
-
-        boolean matchByCounty = eligibilityList.stream()
-                .anyMatch(eligibilityModel -> {
-                    if (eligibilityModel.countyId == null) return false;
-                    return eligibilityModel.countyId == countyId && eligibilityModel.validityEndingDate == null;
-                });
-
-        if (matchByCounty) return true;
-
-        return eligibilityList.stream()
-                .anyMatch(eligibilityModel -> {
-                    if (eligibilityModel.voivodeshipId == null) return false;
-                    if (eligibilityModel.voivodeshipId == -1) return true;
                     return eligibilityModel.voivodeshipId == voivodeshipId && eligibilityModel.validityEndingDate == null;
                 });
     }

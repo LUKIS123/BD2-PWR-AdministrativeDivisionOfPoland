@@ -27,10 +27,9 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final ReportValidator reportValidator;
     private final VoivodeshipRepository voivodeshipRepository;
-
-    // todo: tylko tymczasowo
+    
     public PageResult<ReportDto> getAll(int page, int size) {
-        List<Report> all = reportRepository.findAll();
+        List<Report> all = reportRepository.findAll(size * (page - 1), size);
         return getReportDtoPageResult(page, size, all, (int) reportRepository.count());
     }
 
@@ -65,7 +64,7 @@ public class ReportService {
         if (byId.isEmpty()) {
             throw new InvalidReportRequestException("Voivodeship does not exist");
         }
-        return reportRepository.insertIntoReportTable(
+        return reportRepository.addReport(
                 addReportRequest.voivodeshipId,
                 addReportRequest.countyId,
                 addReportRequest.communeId,
