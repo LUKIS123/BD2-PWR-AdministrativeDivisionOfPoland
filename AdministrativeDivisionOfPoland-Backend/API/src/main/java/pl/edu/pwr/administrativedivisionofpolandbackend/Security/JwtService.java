@@ -5,8 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import pl.edu.pwr.administrativedivisionofpolandbackend.Settings.Secrets;
 
 import java.security.Key;
 import java.util.Date;
@@ -15,8 +17,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
-    private static final String SECRET = "bb22e40e12b5d6c242c656470b6258cf443827b453b6a20793278b625589e241";
+    private final Secrets secrets;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -65,7 +68,7 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(secrets.jwtSecret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
