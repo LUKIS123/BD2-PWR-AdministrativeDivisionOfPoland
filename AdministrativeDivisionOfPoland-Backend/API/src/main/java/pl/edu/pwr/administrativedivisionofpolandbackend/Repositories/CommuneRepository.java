@@ -146,7 +146,7 @@ public interface CommuneRepository extends JpaRepository<Commune, Integer> {
 
     @Query(nativeQuery = true, value = """
             select max(kod_teryt) from gmina\s
-            where id_pow = ?1\s
+            where id_pow = ?1 and length(kod_teryt) = (select max(length(kod_teryt)) from gmina where id_pow = ?1)\s
             """)
     String getMaxTerytCodeByCountyId(Integer countyId);
 
