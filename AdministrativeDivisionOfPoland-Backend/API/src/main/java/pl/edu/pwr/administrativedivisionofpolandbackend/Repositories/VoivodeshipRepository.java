@@ -110,6 +110,7 @@ public interface VoivodeshipRepository extends JpaRepository<Voivodeship, Intege
 
     @Query(nativeQuery = true, value = """
             select max(kod_teryt) from wojewodztwo\s
+            where length(kod_teryt) = (select max(length(kod_teryt)) from wojewodztwo)\s
             """)
     String getMaxTerytCode();
 
